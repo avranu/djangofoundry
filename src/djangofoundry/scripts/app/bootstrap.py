@@ -46,7 +46,8 @@ class Bootstrap:
     """
     def __init__(self, project_name: str | None = None, directory: str = '.'):
         if not project_name:
-            project_name = os.path.basename(directory)
+            # Get the name of the current directory
+            project_name = os.path.basename(os.path.abspath(directory))
         self.project_name = project_name
         self.directory = directory
         self.src_dir = os.path.join(directory, 'src')
@@ -250,12 +251,6 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
             self.run_command([
                 "cp", "-r", str(src_file), str(dest_dir)
             ])
-
-        # Replace {project_name} with the project name in all files
-        self.run_command([
-            "find", self.project_src_dir, "-type", "f", "-name", "*.py", 
-            "-exec", "sed", "-i", f"s/{{project_name}}/{self.project_name}/g", "{}", "+"
-        ])
             
         # Create the main app
         os.makedirs(self.project_src_dir, exist_ok=True)
@@ -263,6 +258,20 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
             "django-admin", "startapp", "dashboard",
             os.path.join(self.project_src_dir, "dashboard")
         ], cwd=self.directory)
+
+        # Remove models.py, tests.py, views.py
+        for file in ["models.py", "tests.py", "views.py"]:
+            os.remove(os.path.join(self.project_src_dir, "dashboard", file))
+            
+        # Replace src/{project_name}/{project_name}/urls.py with files/urls.py
+        os.remove(os.path.join(self.project_src_dir, self.project_name, "urls.py"))
+        shutil.copy2(FILES_PATH / "urls.py", os.path.join(self.project_src_dir, self.project_name, "urls.py"))
+
+        # Replace {project_name} with the project name in all files
+        self.run_command([
+            "find", self.project_src_dir, "-type", "f", "-name", "*.py", 
+            "-exec", "sed", "-i", f"s/{{project_name}}/{self.project_name}/g", "{}", "+"
+        ])
         
         logger.info("✅ Django project setup completed")
 
@@ -306,7 +315,7 @@ def main():
         import argparse
         
         parser = argparse.ArgumentParser(description='Bootstrap Django application')
-        parser.add_argument('-p', '--project-name', default='myproject', help='Project name')
+        parser.add_argument('-p', '--project-name', default=None, help='Project name')
         parser.add_argument('-d', '--directory', default='.', help='Project directory')
         parser.add_argument('-s', '--settings', default=DEFAULT_SETTINGS_PATH, help='Settings file')
         parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
