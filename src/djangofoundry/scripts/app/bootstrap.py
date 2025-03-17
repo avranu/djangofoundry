@@ -162,16 +162,23 @@ PYTHONDONTWRITEBYTECODE=1
         # Append files/pyproject.toml to the end of ./pyproject.toml
         project_pyproject = Path(self.directory) / "pyproject.toml"
         foundry_pyproject = FILES_PATH / "pyproject.toml"
-        with project_pyproject.open("a") as f:
-            # Replace {project_name} with the project name
-            content = foundry_pyproject.read_text().replace("{project_name}", self.project_name)
-            f.write(content)
+        shutil.copy2(foundry_pyproject, project_pyproject)
         
         # Copy package.json from files/ to project root
-        # Replace {package_name} with the package name
         foundry_package_json = FILES_PATH / "package.json"
         package_json = Path(self.directory) / "package.json"
-        package_json.write_text(foundry_package_json.read_text().replace("{package_name}", self.project_name))
+        shutil.copy2(foundry_package_json, package_json)
+
+        # Use sed to replace {package_name} with the project name in both files
+        self.run_command([
+            "sed", "-i", f"s/{{package_name}}/{self.project_name}/g", 
+            str(project_pyproject), str(package_json)
+        ])
+
+        # Add .vscode/settings.json and .hypothesis to .gitignore
+        with open(os.path.join(self.directory, ".gitignore"), "a") as gitignore_file:
+            gitignore_file.write(".vscode/settings.json\n")
+            gitignore_file.write(".hypothesis\n")
         
         logger.info("✅ Project initialized successfully")
 
@@ -199,6 +206,7 @@ PYTHONDONTWRITEBYTECODE=1
             "pydoctor", "pytest", "pytest-cov", "flake8"
         ]
         self.run_command(["uv", "add", "--dev"] + dev_tools, cwd=self.directory)
+        self.run_command(["uv", "sync", "--all-groups"], cwd=self.directory)
         
         logger.info("✅ Dependencies installed successfully")
 
@@ -222,11 +230,15 @@ PYTHONDONTWRITEBYTECODE=1
         ], cwd=self.directory)
 
         # Recursively copy the files from files/lib and files/dashboard to src/{project_name}/
-        foundry_files = FILES_PATH / "lib"
-        dashboard_files = FILES_PATH / "dashboard"
-        for src_dir in [foundry_files, dashboard_files]:
+        FILES = {
+            (FILES_PATH / "lib", self.project_src_dir),
+            (FILES_PATH / "dashboard", self.project_src_dir),
+            (FILES_PATH / ".github", self.directory),
+            (FILES_PATH / ".pre-commit-config.yml", self.directory),
+        }
+        for src_file, dest_dir in FILES:
             self.run_command([
-                "cp", "-r", str(src_dir), self.project_src_dir
+                "cp", "-r", str(src_file), str(dest_dir)
             ])
 
         # Replace {project_name} with the project name in all files
@@ -244,6 +256,17 @@ PYTHONDONTWRITEBYTECODE=1
         
         logger.info("✅ Django project setup completed")
 
+    def setup_db(self) -> None:
+        """
+        Set up the database for the Django project.
+        """
+        logger.info("Setting up database...")
+        
+        # Create the database
+        self.run_command([
+            "python", "manage.py", "migrate"
+        ], cwd=self.project_src_dir)
+
     def setup(self) -> None:
         """
         Run the complete project setup process.
@@ -255,6 +278,7 @@ PYTHONDONTWRITEBYTECODE=1
             self.create_venv()
             self.install_dependencies()
             self.setup_django_project()
+            self.setup_db()
             
             logger.info(f"🎉 Project {self.project_name} has been successfully set up!")
             logger.info("To activate the environment: source .venv/bin/activate")

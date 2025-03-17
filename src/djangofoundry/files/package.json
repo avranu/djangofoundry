@@ -4,14 +4,14 @@
   "description": "TODO: Add a description",
   "scripts": {
     "prettier": "prettier --write **/*.{json,js,md,yml,yaml} *.{json,js,md,yml,yaml}",
-    "test": "pytest tests/unit --exitfirst",
+    "test": "uv run python src/{project_name}/manage.py test",
     "hypothesis": "pytest tests/unit/models/hypothesis --hypothesis-show-statistics",
-    "integration": "python -m unittest discover -s tests/integration --failfast",
     "pre-commit": "uv run pre-commit run --all-files",
-    "mypy": "uv run mypy src/{project_name}",
-    "coverage-test": "uv run coverage run --source=src -m unittest discover -s tests/unit --failfast",
-    "coverage-html": "uv run coverage html -d tests/coverage",
-    "coverage": "pytest --cov={project_name} --cov-report=html tests/unit"
+    "mypy": "uv run mypy src",
+    "serve": "uv run python src/{project_name}/manage.py runserver",
+    "migrate": "uv run python src/{project_name}/manage.py migrate",
+    "build": "uv run build",
+    "publish": "uv run publish"
   },
   "author": "{full_name} <{email}>",
   "license": "MIT",

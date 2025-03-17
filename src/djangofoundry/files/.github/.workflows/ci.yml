@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    name: Lint, Security, and Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install Dependencies
+        run: uv sync --all-groups
+
+      - name: Run Pre-commit Hooks
+        run: uv run pre-commit run --all-files
+
+      - name: Run Ruff
+        run: uv run ruff check .
+
+      - name: Run Mypy
+        run: uv run mypy --config-file pyproject.toml src
+
+      - name: Run Bandit
+        run: uv run bandit -r src/
+
+      - name: Unit Tests
+        run: uv run python -m unittest discover -s tests/unit
