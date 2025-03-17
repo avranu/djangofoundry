@@ -20,7 +20,7 @@
 from __future__ import annotations
 import logging
 import re
-from typing import List, Optional
+from typing import Optional
 from jinja2 import TemplateNotFound
 # DJANGO imports
 from django.db import connections
@@ -141,15 +141,15 @@ class ModelHelper(PythonHelper):
 		return result
 
 	@classmethod
-	def remove_duplicate_indexes(cls, indexes: List[IndexInfo]) -> List[IndexInfo]:
+	def remove_duplicate_indexes(cls, indexes: list[IndexInfo]) -> list[IndexInfo]:
 		"""
 		Remove duplicate indexes from the list of indexes.
 
 		Args:
-			indexes (List[IndexInfo]): The list of indexes to filter
+			indexes (list[IndexInfo]): The list of indexes to filter
 
 		Returns:
-			List[IndexInfo]: The filtered list of indexes
+			list[IndexInfo]: The filtered list of indexes
 		"""
 		unique_indexes = []
 		for index in indexes:
@@ -157,7 +157,7 @@ class ModelHelper(PythonHelper):
 				unique_indexes.append(index)
 		return unique_indexes
 
-	def get_columns(self, table_name: Optional[str] = None) -> List[ColumnInfo]:
+	def get_columns(self, table_name: Optional[str] = None) -> list[ColumnInfo]:
 		"""
 		Get the list of columns for the given table.
 
@@ -165,7 +165,7 @@ class ModelHelper(PythonHelper):
 			table_name (str): The name of the table to get columns for
 
 		Returns:
-			List[ColumnInfo]: The list of columns for the given table
+			list[ColumnInfo]: The list of columns for the given table
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -198,7 +198,7 @@ class ModelHelper(PythonHelper):
 				))
 			return columns
 
-	def get_constraints(self, table_name: Optional[str] = None) -> List[ConstraintInfo]:
+	def get_constraints(self, table_name: Optional[str] = None) -> list[ConstraintInfo]:
 		"""
 		Get the list of constraints for the given table.
 
@@ -206,7 +206,7 @@ class ModelHelper(PythonHelper):
 			table_name (str): The name of the table to get constraints for
 
 		Returns:
-			List[ConstraintInfo]: The list of constraints for the given table
+			list[ConstraintInfo]: The list of constraints for the given table
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -235,7 +235,7 @@ class ModelHelper(PythonHelper):
 				))
 			return constraints
 
-	def get_indexes(self, table_name: Optional[str] = None) -> List[IndexInfo]:
+	def get_indexes(self, table_name: Optional[str] = None) -> list[IndexInfo]:
 		"""
 		Get the list of indexes for the given table.
 
@@ -243,7 +243,7 @@ class ModelHelper(PythonHelper):
 			table_name (str): The name of the table to get indexes for
 
 		Returns:
-			List[IndexInfo]: The list of indexes for the given table
+			list[IndexInfo]: The list of indexes for the given table
 		"""
 		if not table_name:
 			table_name = self.table_name

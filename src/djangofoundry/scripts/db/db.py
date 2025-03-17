@@ -20,14 +20,17 @@
 #!/usr/bin/env python
 
 # Generic imports
-import argparse, textwrap, os, re, pathlib
+import argparse
+import textwrap
+import os
+import re
+import pathlib
 import shutil
 import sys
 import subprocess
 from shutil import which
 import time
 import logging
-from typing import Callable
 # Our imports
 from djangofoundry.scripts.db.choices import Actions, PostgresStatusCodes
 from djangofoundry.scripts.db.constants import DEFAULT_DATA_PATH, DEFAULT_LOG_PATH, EXE

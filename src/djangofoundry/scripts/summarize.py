@@ -2,7 +2,7 @@ import os
 import ast
 import argparse
 import logging
-from typing import List, Dict, Any, Union
+from typing import Any, Union
 
 # Configure logger to print to output
 logging.basicConfig(level=logging.DEBUG, handlers=[logging.StreamHandler()])
@@ -15,26 +15,26 @@ class PythonClassParser:
 	This class will parse all Python files in a directory and output a summary of all classes found in those files, which can be used
 	to generate documentation for the project, or to pass to other tools (like LLMs).
 	"""
-	def __init__(self, directory: str, output_file: str, ignored_paths: List[str], recursive: bool) -> None:
+	def __init__(self, directory: str, output_file: str, ignored_paths: list[str], recursive: bool) -> None:
 		logger.debug(f"Initializing PythonClassParser: {directory} : {output_file}")
 		self.directory: str = directory
 		self.output_file: str = output_file
 		self.printed_module_names: set[str] = set()
-		self.ignored_paths: List[str] = ignored_paths
+		self.ignored_paths: list[str] = ignored_paths
 		self.recursive: bool = recursive
 
 	@classmethod
-	def is_ignored(cls, path: str, ignored_paths: List[str]) -> bool:
+	def is_ignored(cls, path: str, ignored_paths: list[str]) -> bool:
 		for ignored in ignored_paths:
 			if ignored in path:
 				return True
 		return False
 
-	def find_python_files(self, directory: str) -> List[str]:
+	def find_python_files(self, directory: str) -> list[str]:
 		"""
 		Recursively find all Python files in a directory.
 		"""
-		python_files: List[str] = []
+		python_files: list[str] = []
 		try:
 			for root, dirs, files in os.walk(directory):
 				if not self.recursive:
@@ -98,13 +98,13 @@ class PythonClassParser:
 		if return_type.startswith('Optional['):
 			return_type = return_type[return_type.rfind('[') + 1:-1]
 
-		# Turn List[str] into str[]
-		if return_type.startswith('List['):
-			return_type = return_type.replace('List[', '')[:-1] + '[]'
+		# Turn list[str] into str[]
+		if return_type.startswith('list['):
+			return_type = return_type.replace('list[', '')[:-1] + '[]'
 
-		# Turn Dict[str, int] into {int}
-		if return_type.startswith('Dict['):
-			return_type = return_type.replace('Dict[', '{')[:-1] + '}'
+		# Turn dict[str, int] into {int}
+		if return_type.startswith('dict['):
+			return_type = return_type.replace('dict[', '{')[:-1] + '}'
 
 		# Turn Tuple[str, int] into (str, int)
 		if return_type.startswith('Tuple['):
@@ -142,22 +142,22 @@ class PythonClassParser:
 			return ''
 
 	@classmethod
-	def find_classes_and_methods(cls, tree: ast.Module) -> Dict[str, Dict[str, Any]]:
+	def find_classes_and_methods(cls, tree: ast.Module) -> dict[str, dict[str, Any]]:
 		"""
 		Find all classes and methods in a Python file.
 		"""
-		classes: Dict[str, Dict[str, Any]] = {}
+		classes: dict[str, dict[str, Any]] = {}
 		for node in ast.walk(tree):
 			if isinstance(node, ast.ClassDef):
 				class_name: str = node.name
-				base_classes: List[str] = [base.id for base in node.bases if isinstance(base, ast.Name)]
-				method_names: List[str] = [cls.get_method_signature(n) for n in node.body if isinstance(n, ast.FunctionDef) and not n.name.startswith('_')]
+				base_classes: list[str] = [base.id for base in node.bases if isinstance(base, ast.Name)]
+				method_names: list[str] = [cls.get_method_signature(n) for n in node.body if isinstance(n, ast.FunctionDef) and not n.name.startswith('_')]
 				if method_names:  # Ignore classes with no methods (other than __init__)
 					classes[class_name] = {"name": class_name, "base_classes": base_classes, "methods": method_names}
 		return classes
 
 	@classmethod
-	def group_classes_by_module(cls, classes: Dict[str, List[Dict[str, Any]]], module_name: str) -> List[Dict[str, Any]]:
+	def group_classes_by_module(cls, classes: dict[str, list[dict[str, Any]]], module_name: str) -> list[dict[str, Any]]:
 		"""
 		Group classes by module name.
 		"""
@@ -165,7 +165,7 @@ class PythonClassParser:
 			classes[module_name] = []
 		return classes[module_name]
 
-	def write_to_file(self, grouped_classes: Dict[str, List[Dict[str, Any]]]) -> None:
+	def write_to_file(self, grouped_classes: dict[str, list[dict[str, Any]]]) -> None:
 		"""
 		Write classes and methods to a file.
 		"""
@@ -201,7 +201,7 @@ class PythonClassParser:
 		with open(self.output_file, 'a') as f:
 			f.write("Summarized as:\n#Directory\nClass\n\tmethods\n\nOmitted self/cls params, methods beginning with _\n\n--\n\n")
 
-		grouped_classes: Dict[str, List[Dict[str, Any]]] = {}
+		grouped_classes: dict[str, list[dict[str, Any]]] = {}
 		for file in self.find_python_files(self.directory):
 			tree = self.parse_file(file)
 			if tree is not None:

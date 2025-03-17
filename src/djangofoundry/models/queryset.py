@@ -22,7 +22,7 @@ from __future__ import annotations
 from decimal import Decimal
 from functools import reduce
 import operator
-from typing import TYPE_CHECKING, List, Tuple, Union, Callable, Any, Optional
+from typing import TYPE_CHECKING, Tuple, Union, Callable, Any, Optional
 from datetime import datetime
 from math import sqrt
 from time import perf_counter_ns
@@ -45,7 +45,7 @@ import auto_prefetch
 # App Imports
 
 if TYPE_CHECKING:
-	from djangofoundry.models.manager import Manager
+	pass
 
 #
 # Set up logging for this module. __name__ includes the namespace (e.g. dashboard.models.cases).
@@ -994,7 +994,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		correlation = self.covariance(field_name_x, field_name_y) / (standard_deviation_x * standard_deviation_y)
 		return correlation
 
-	def find_correlated_fields(self, field_name: str, threshold: float = 0.5) -> List[str]:
+	def find_correlated_fields(self, field_name: str, threshold: float = 0.5) -> list[str]:
 		"""
 		Find the fields that are correlated with a given field.
 
@@ -1003,7 +1003,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			threshold (float): The minimum correlation to consider a field correlated
 
 		Returns:
-			List[str]: The names of the fields that are correlated with the given field
+			list[str]: The names of the fields that are correlated with the given field
 
 		Example:
 			>>> Case.objects.find_correlated_fields('processing_time')
@@ -1090,7 +1090,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		y = (slope * x) + intercept
 		return y
 
-	def linear_regression_residuals(self, field_name_x: str, field_name_y: str) -> List[float]:
+	def linear_regression_residuals(self, field_name_x: str, field_name_y: str) -> list[float]:
 		"""
 		Get the linear regression residuals of two fields.
 
@@ -1102,7 +1102,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			field_name_y (str): The name of the second field to get the linear regression residuals of
 
 		Returns:
-			List[float]: The linear regression residuals of the two fields
+			list[float]: The linear regression residuals of the two fields
 
 		Example:
 			>>> Case.objects.linear_regression_residuals('processing_time', 'processing_time')
@@ -1159,13 +1159,13 @@ class QuerySet(auto_prefetch.QuerySet):
 		entries = self.order_by('?')[:sample_size]
 		return entries
 
-	def search(self, search_term: str, fields: Optional[List[str]] = None) -> Self:
+	def search(self, search_term: str, fields: Optional[list[str]] = None) -> Self:
 		"""
 		Get the entries that match the search term.
 
 		Args:
 			search_term (str): The search term to filter by
-			fields (List[str]): The fields to search
+			fields (list[str]): The fields to search
 
 		Returns:
 			Self: The entries that match the search term
@@ -1223,7 +1223,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		entries = self.filter(**{f"{format(date_field)}__range": [start_date, end_date]})
 		return entries
 
-	def rolling_mean(self, field_name: str, window: int) -> List[float]:
+	def rolling_mean(self, field_name: str, window: int) -> list[float]:
 		"""
 		Get the rolling mean of a field.
 
@@ -1236,12 +1236,12 @@ class QuerySet(auto_prefetch.QuerySet):
 			window (int): The size of the window
 
 		Returns:
-			List[float]: The rolling mean of the field
+			list[float]: The rolling mean of the field
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).rolling(window=window).mean().tolist()
 
-	def exponential_smoothing(self, field_name: str, alpha: float) -> List[float]:
+	def exponential_smoothing(self, field_name: str, alpha: float) -> list[float]:
 		"""
 		Get the exponential smoothing of a field.
 
@@ -1250,12 +1250,12 @@ class QuerySet(auto_prefetch.QuerySet):
 			alpha (float): The smoothing factor
 
 		Returns:
-			List[float]: The exponential smoothing of the field
+			list[float]: The exponential smoothing of the field
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).ewm(alpha=alpha).mean().tolist()
 
-	def seasonal_decomposition(self, field_name: str, freq: int) -> Tuple[List[float], List[float], List[float]]:
+	def seasonal_decomposition(self, field_name: str, freq: int) -> Tuple[list[float], list[float], list[float]]:
 		"""
 		Get the seasonal decomposition of a field.
 
@@ -1268,7 +1268,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			freq (int): The frequency of the data
 
 		Returns:
-			Tuple[List[float], List[float], List[float]]: The trend, seasonal, and residual components
+			Tuple[list[float], list[float], list[float]]: The trend, seasonal, and residual components
 		"""
 		data = self.values_list(field_name, flat=True)
 		decomposition = seasonal_decompose(data, period=freq)
@@ -1325,7 +1325,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		data = self.values_list(field_name, flat=True)
 		return pacf(data, nlags=lag)[lag]
 
-	def granger_causality(self, field_name_x: str, field_name_y: str, max_lag: int) -> List[float]:
+	def granger_causality(self, field_name_x: str, field_name_y: str, max_lag: int) -> list[float]:
 		"""
 		Get the granger causality of two fields.
 
@@ -1342,7 +1342,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			max_lag (int): The maximum lag
 
 		Returns:
-			List[float]: The granger causality of the two fields
+			list[float]: The granger causality of the two fields
 
 		Example:
 			>>> Case.objects.granger_causality('field_x', 'field_y', 1)
@@ -1355,7 +1355,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		results = grangercausalitytests(data, max_lag, verbose=False)
 		return [result[0]['ssr_ftest'][1] for result in results.values()]
 
-	def cumulative_sum(self, field_name: str) -> List[float]:
+	def cumulative_sum(self, field_name: str) -> list[float]:
 		"""
 		Calculate the cumulative sum of a field.
 
@@ -1365,7 +1365,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			field_name (str): The name of the field
 
 		Returns:
-			List[float]: The cumulative sum of the field
+			list[float]: The cumulative sum of the field
 
 		Example:
 			>>> Case.objects.cumulative_sum('field')
@@ -1374,7 +1374,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).cumsum().tolist()
 
-	def z_score(self, field_name: str) -> List[float]:
+	def z_score(self, field_name: str) -> list[float]:
 		"""
 		Calculate the z-score of a field.
 
@@ -1386,7 +1386,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			field_name (str): The name of the field
 
 		Returns:
-			List[float]: The z-score of the field
+			list[float]: The z-score of the field
 
 		Example:
 			>>> Case.objects.z_score('field')
@@ -1406,7 +1406,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			multiplier (float): The multiplier to use for the IQR
 
 		Returns:
-			List[float]: The IQR of the field
+			list[float]: The IQR of the field
 
 		Example:
 			>>> Case.objects.iqr_outliers('field')
