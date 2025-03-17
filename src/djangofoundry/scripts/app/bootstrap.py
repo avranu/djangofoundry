@@ -75,8 +75,8 @@ class Bootstrap:
 
         # Check RAM
         ram_usage = psutil.virtual_memory()
-        if ram_usage.available < 1 * 10**9:  # less than 2GB
-            raise EnvironmentError(f"Insufficient RAM. At least 1GB is required. {ram_usage.available / 10**9:.2f}GB available.")
+        if ram_usage.available < 0.5 * 10**9:  # less than 1/2GB
+            raise EnvironmentError(f"Insufficient RAM. At least 0.5GB is required. {ram_usage.available / 10**9:.2f}GB available.")
         logger.debug("RAM check passed.")
 
         # Check for required tools
@@ -122,12 +122,16 @@ class Bootstrap:
         os.makedirs(os.path.join(self.directory, "tests"), exist_ok=True)
         
         # Create .env file
-        env_content = """AIDER_OPENAI_API_KEY=example
+        env_content = f"""AIDER_OPENAI_API_KEY=example
 AIDER_ANTHROPIC_API_KEY=example
 AIDER_MODEL="anthropic/claude-3-7-sonnet-20250219"
 PYPI_TOKEN=example
 UV_LINK_MODE="copy"
 PYTHONDONTWRITEBYTECODE=1
+PYTHONPATH="./src/{self.project_name}/:$PYTHONPATH"
+DEBUG=TRUE
+SECRET_KEY=django-insecure-{os.urandom(24).hex()}
+DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
 """
         with open(os.path.join(self.directory, ".env"), "w") as f:
             f.write(env_content)
@@ -153,7 +157,7 @@ PYTHONDONTWRITEBYTECODE=1
             f"--name={self.project_name}",
             "--package",
             "--app",
-            "--description", "TODO",
+            "--description", f"A scaffold for the {self.project_name} project.",
             "--vcs", "git",
             "--build-backend", "hatch",
             "-p", "3.12"
@@ -162,7 +166,9 @@ PYTHONDONTWRITEBYTECODE=1
         # Append files/pyproject.toml to the end of ./pyproject.toml
         project_pyproject = Path(self.directory) / "pyproject.toml"
         foundry_pyproject = FILES_PATH / "pyproject.toml"
-        shutil.copy2(foundry_pyproject, project_pyproject)
+        with open(project_pyproject, "a") as project_file:
+            with open(foundry_pyproject, "r") as foundry_file:
+                project_file.write(foundry_file.read())
         
         # Copy package.json from files/ to project root
         foundry_package_json = FILES_PATH / "package.json"
@@ -179,6 +185,10 @@ PYTHONDONTWRITEBYTECODE=1
         with open(os.path.join(self.directory, ".gitignore"), "a") as gitignore_file:
             gitignore_file.write(".vscode/settings.json\n")
             gitignore_file.write(".hypothesis\n")
+
+        # Create empty "logs" directory
+        os.makedirs(os.path.join(self.directory, "logs"), exist_ok=True)
+        os.makedirs(os.path.join(self.directory, "docs"), exist_ok=True)
         
         logger.info("✅ Project initialized successfully")
 

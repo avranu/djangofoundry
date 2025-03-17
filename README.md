@@ -34,6 +34,12 @@ DjangoFoundry includes classes to manage aspects of a Django application, such a
 
 ## Sample Cases
 
+Bootstrapping a new django project
+
+```bash
+python src/djangofoundry/scripts/app/bootstrap.py
+```
+
 Consider a scenario where you are processing a set of items, and you want to display a progress bar to indicate the progress of the task. 
 
 ```python

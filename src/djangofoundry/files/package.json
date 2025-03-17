@@ -1,17 +1,19 @@
 {
   "name": "{project_name}",
   "version": "0.0.1",
-  "description": "TODO: Add a description",
+  "description": "Scaffold for the {project_name} project.",
   "scripts": {
     "prettier": "prettier --write **/*.{json,js,md,yml,yaml} *.{json,js,md,yml,yaml}",
-    "test": "uv run python src/{project_name}/manage.py test",
+    "test": "uv run python src/{project_name}/manage.py test --failfast",
     "hypothesis": "pytest tests/unit/models/hypothesis --hypothesis-show-statistics",
-    "pre-commit": "uv run pre-commit run --all-files",
+    "pre-commit": "uv run pre-commit run --all-files src",
     "mypy": "uv run mypy src",
     "serve": "uv run python src/{project_name}/manage.py runserver",
     "migrate": "uv run python src/{project_name}/manage.py migrate",
-    "build": "uv run build",
-    "publish": "uv run publish"
+    "publish": "uv run build && uv run publish",
+    "sass": "sass src/{project_name}/dashboard/frontend/sass:src/{project_name}/dashboard/frontend/static/dashboard --watch",
+    "ruff": "uv run ruff check --fix src/{project_name}/",
+    "bandit": "bandit -c 'pyproject.toml' -r src/{project_name}/"
   },
   "author": "{full_name} <{email}>",
   "license": "MIT",

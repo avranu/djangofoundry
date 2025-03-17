@@ -13,6 +13,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.scripts]
+bootstrap = "djangofoundry.scripts.app.bootstrap:main"
+
 [project.urls]
 "Homepage" = "https://github.com/avranu/djangofoundry"
 "Bug Tracker" = "https://github.com/avranu/djangofoundry/issues"
