@@ -1,0 +1,1 @@
+from {project_name}.lib.exceptions.exceptions import AppError

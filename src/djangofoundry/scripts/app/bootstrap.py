@@ -9,7 +9,7 @@
 *                                                                                                                      *
 *        File:    bootstrap.py                                                                                         *
 *        Project: django-foundry                                                                                       *
-*        Version: 0.0.1                                                                                                *
+*        Version: 0.0.10                                                                                               *
 *        Created: 2025-03-17                                                                                           *
 *        Author:  Jess Mann                                                                                            *
 *        Email:   jess@jmann.me                                                                                        *
@@ -24,26 +24,34 @@
 *********************************************************************************************************************"""
 from __future__ import annotations
 import os
+from pathlib import Path
 import sys
 import shutil
 import subprocess
 import logging
+from djangofoundry.scripts.utils.exceptions import DbStartError
+from djangofoundry.scripts.utils.settings import DEFAULT_SETTINGS_PATH
 import psutil
 from typing import Optional
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s', handlers=[logging.StreamHandler()])
 logger = logging.getLogger(__name__)
+
+FILES_PATH = Path(__file__).parents[2] / "files"
 
 class Bootstrap:
     """
     Handles project setup tasks for a Django project using modern tools like uv and bun.
     """
-    def __init__(self, project_name: str = 'myproject', directory: str = '.'):
+    def __init__(self, project_name: str | None = None, directory: str = '.'):
+        if not project_name:
+            project_name = os.path.basename(directory)
         self.project_name = project_name
         self.directory = directory
         self.src_dir = os.path.join(directory, 'src')
         self.project_src_dir = os.path.join(self.src_dir, project_name)
+        super().__init__()
 
     def check_environment(self) -> None:
         """
@@ -62,17 +70,17 @@ class Bootstrap:
         # Check disk space
         disk_usage = psutil.disk_usage('/')
         if disk_usage.free < 1 * 10**9:  # less than 1GB
-            raise EnvironmentError("Insufficient disk space. At least 1GB is required.")
+            raise EnvironmentError(f"Insufficient disk space. At least 1GB is required. {disk_usage.free / 10**9:.2f}GB available.")
         logger.debug("Disk space check passed.")
 
         # Check RAM
         ram_usage = psutil.virtual_memory()
-        if ram_usage.available < 2 * 10**9:  # less than 2GB
-            raise EnvironmentError("Insufficient RAM. At least 2GB is required.")
+        if ram_usage.available < 1 * 10**9:  # less than 2GB
+            raise EnvironmentError(f"Insufficient RAM. At least 1GB is required. {ram_usage.available / 10**9:.2f}GB available.")
         logger.debug("RAM check passed.")
 
         # Check for required tools
-        for tool in ["uv", "bun"]:
+        for tool in ["uv", "django-admin", "direnv"]:
             if not shutil.which(tool):
                 raise EnvironmentError(f"Required tool '{tool}' is not installed.")
             
@@ -125,11 +133,11 @@ PYTHONDONTWRITEBYTECODE=1
             f.write(env_content)
         
         # Create .envrc file
-        envrc_content = """PATH_ADD src
-dotenv
-"""
+        envrc_content = """dotenv"""
         with open(os.path.join(self.directory, ".envrc"), "w") as f:
             f.write(envrc_content)
+
+        self.run_command(['direnv', 'allow'], cwd=self.directory)
             
         logger.info("✅ Project structure created successfully")
 
@@ -150,16 +158,20 @@ dotenv
             "--build-backend", "hatch",
             "-p", "3.12"
         ], cwd=self.directory)
+
+        # Append files/pyproject.toml to the end of ./pyproject.toml
+        project_pyproject = Path(self.directory) / "pyproject.toml"
+        foundry_pyproject = FILES_PATH / "pyproject.toml"
+        with project_pyproject.open("a") as f:
+            # Replace {project_name} with the project name
+            content = foundry_pyproject.read_text().replace("{project_name}", self.project_name)
+            f.write(content)
         
-        # Remove generated __init__.py file
-        init_file = os.path.join(self.project_src_dir, "__init__.py")
-        if os.path.exists(init_file):
-            os.remove(init_file)
-            logger.debug(f"Removed {init_file}")
-        
-        # Initialize with bun
-        logger.info("Initializing project with bun...")
-        self.run_command(["bun", "init", "-y"], cwd=self.directory)
+        # Copy package.json from files/ to project root
+        # Replace {package_name} with the package name
+        foundry_package_json = FILES_PATH / "package.json"
+        package_json = Path(self.directory) / "package.json"
+        package_json.write_text(foundry_package_json.read_text().replace("{package_name}", self.project_name))
         
         logger.info("✅ Project initialized successfully")
 
@@ -178,13 +190,13 @@ dotenv
         logger.info("Installing Django and project dependencies...")
         
         # Core dependencies
-        self.run_command(["uv", "add", "django", "httpx"], cwd=self.directory)
+        self.run_command(["uv", "add", "django", "httpx", "pydantic", "typing-extensions", "djangofoundry"], cwd=self.directory)
         
         # Development dependencies
         dev_tools = [
-            "ruff", "pyright", "mypy", "pre-commit", "pydantic", 
-            "typing-extensions", "bandit", "coverage", "hypothesis", 
-            "pydoctor", "pytest", "pytest-cov", "djangofoundry"
+            "ruff", "pyright", "mypy", "pre-commit",
+            "bandit", "coverage", "hypothesis", 
+            "pydoctor", "pytest", "pytest-cov", "flake8"
         ]
         self.run_command(["uv", "add", "--dev"] + dev_tools, cwd=self.directory)
         
@@ -196,18 +208,38 @@ dotenv
         """
         logger.info("Setting up Django project...")
         
+        # Remove generated __init__.py file, so django can overwrite it
+        init_file = os.path.join(self.project_src_dir, "__init__.py")
+        if os.path.exists(init_file):
+            os.remove(init_file)
+            logger.debug(f"Removed {init_file}")
+            
         # Create Django project
         self.run_command([
             "django-admin", "startproject", 
             self.project_name, 
             self.project_src_dir
         ], cwd=self.directory)
-        
+
+        # Recursively copy the files from files/lib and files/dashboard to src/{project_name}/
+        foundry_files = FILES_PATH / "lib"
+        dashboard_files = FILES_PATH / "dashboard"
+        for src_dir in [foundry_files, dashboard_files]:
+            self.run_command([
+                "cp", "-r", str(src_dir), self.project_src_dir
+            ])
+
+        # Replace {project_name} with the project name in all files
+        self.run_command([
+            "find", self.project_src_dir, "-type", "f", "-name", "*.py", 
+            "-exec", "sed", "-i", f"s/{{project_name}}/{self.project_name}/g", "{}", "+"
+        ])
+            
         # Create the main app
-        os.makedirs(os.path.join(self.project_src_dir, "apps"), exist_ok=True)
+        os.makedirs(self.project_src_dir, exist_ok=True)
         self.run_command([
             "django-admin", "startapp", "dashboard",
-            os.path.join(self.project_src_dir, "apps", "dashboard")
+            os.path.join(self.project_src_dir, "dashboard")
         ], cwd=self.directory)
         
         logger.info("✅ Django project setup completed")
@@ -231,3 +263,40 @@ dotenv
         except Exception as e:
             logger.error(f"Project setup failed: {e}")
             raise
+
+def main():
+    """
+    Main entry point for the command-line interface.
+    """
+    try:
+        import argparse
+        
+        parser = argparse.ArgumentParser(description='Bootstrap Django application')
+        parser.add_argument('-p', '--project-name', default='myproject', help='Project name')
+        parser.add_argument('-d', '--directory', default='.', help='Project directory')
+        parser.add_argument('-s', '--settings', default=DEFAULT_SETTINGS_PATH, help='Settings file')
+        parser.add_argument('--verbose', action='store_true', help='Enable verbose output')
+        
+        args = parser.parse_args()
+        
+        bootstrap = Bootstrap(args.project_name, args.directory)
+        bootstrap.setup()
+
+        if args.verbose:
+            logger.setLevel(logging.DEBUG)
+
+    except KeyboardInterrupt:
+        logger.info('Shutting down...')
+        sys.exit(0)
+    except DbStartError:
+        logger.error('Could not start DB. Cannot continue')
+        sys.exit(1)
+    except EnvironmentError as e:
+        logger.error(f'Environment error: {e}')
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()

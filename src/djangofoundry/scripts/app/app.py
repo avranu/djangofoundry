@@ -9,7 +9,7 @@
 *                                                                                                                      *
 *        File:    app.py                                                                                               *
 *        Project: django-foundry                                                                                       *
-*        Version: 0.0.1                                                                                                *
+*        Version: 0.0.10                                                                                               *
 *        Created: 2025-03-17                                                                                           *
 *        Author:  Jess Mann                                                                                            *
 *        Email:   jess@jmann.me                                                                                        *
@@ -369,7 +369,7 @@ def main():
         
         # For setup action, use the Bootstrap class
         if args.action == 'setup':
-            from bootstrap import Bootstrap
+            from djangofoundry.scripts.app.bootstrap import Bootstrap
             bootstrap = Bootstrap(args.project_name, args.directory)
             bootstrap.setup()
             return

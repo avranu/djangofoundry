@@ -1,27 +1,12 @@
-[project]
-name = "djangofoundry"
-version = "0.0.10"
-authors = [
-  { name="Jess Mann", email="jess.a.mann+df@gmail.com" },
-]
-description = "A collection of classes built on Django to make it easier to build web applications."
-readme = "README.md"
-requires-python = ">=3.12"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
-]
 
-[project.urls]
-"Homepage" = "https://github.com/avranu/djangofoundry"
-"Bug Tracker" = "https://github.com/avranu/djangofoundry/issues"
+[tool.hatch.build.targets.wheel]
+packages = ["src/{project_name}"]
 
 [tool.pydoctor]
 add-package = ["./src"]
 project-name = "Django Foundry"
 project-version = "0.0.1"
-project-url = "https://github.com/avranu/djangofoundry"
+project-url = "https://github.com/{git_user}/{project_name}"
 html-output = "../docs/API"
 project-base-dir = "./src"
 intersphinx = ["https://docs.python.org/3/objects.inv"]
@@ -948,7 +933,7 @@ reportUnknownVariableType = "none"
 
 [tool.mypy]
 python_version = "3.12"
-mypy_path = "./src/djangofoundry"
+mypy_path = "./src"
 namespace_packages = true
 explicit_package_bases = false
 warn_unused_ignores = true
