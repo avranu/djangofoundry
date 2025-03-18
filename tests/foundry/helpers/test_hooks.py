@@ -24,7 +24,7 @@ from djangofoundry.helpers.hooks.hook import Hook, DEFAULT_NAMESPACE, DEFAULT_PR
 
 from tests.testcase import TestCase
 
-class TestHook(TestCase)(TestCase):
+class TestHook(TestCase):
 
 	def setUp(self):
 		self.action = lambda x: x * 2

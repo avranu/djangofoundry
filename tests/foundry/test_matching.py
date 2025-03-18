@@ -61,7 +61,7 @@ class TheFuzzTestCase(TestCase):
 
 from tests.testcase import TestCase
 
-class TestMatchingEngine(TestCase)(TestCase):
+class TestMatchingEngine(TestCase):
 	'''
 	Tests the MatchingEngine class
 	'''
