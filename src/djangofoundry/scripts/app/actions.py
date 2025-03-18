@@ -10,7 +10,9 @@ class Actions(Enum):
 			start the django server
 		test:
 			runs our unit/integration tests
+
 	"""
+
 	START = "runserver"
 	TEST = "test"
 	STOP = "stop"

@@ -1,37 +1,41 @@
 """
-	Assists with registering and calling hooks for arbitrary points in the code.
+Assists with registering and calling hooks for arbitrary points in the code.
 
-	This allows our software to be modular:
-	addons can be included which modify core behavior of our software without subclassing or overriding anything.
+This allows our software to be modular:
+addons can be included which modify core behavior of our software without subclassing or overriding anything.
 
-	Metadata:
+Metadata:
 
-		File: hooks.py
-		Project: Django Foundry
-		Created Date: 02 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: hooks.py
+Project: Django Foundry
+Created Date: 02 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from typing import Any, Callable, Iterable, Optional
-from djangofoundry.helpers.hooks.meta import NamespaceMap, DEFAULT_NAMESPACE, DEFAULT_PRIORITY
+
 from djangofoundry.helpers.hooks.hook import Hook
+from djangofoundry.helpers.hooks.meta import DEFAULT_NAMESPACE, DEFAULT_PRIORITY, NamespaceMap
 from djangofoundry.helpers.hooks.waypoint import Waypoint
+
 
 class Hooks:
 	"""
 	The Hooks class allows registration of modular hooks throughout the application.
 	"""
+
 	# A map of hooks in the format: {namespace: {name: list(Callable())}}
 	_hooks : NamespaceMap
 
@@ -52,6 +56,7 @@ class Hooks:
 
 		Returns:
 			Iterable[Any]: Returns a list of all retur values for the hooks run.
+
 		"""
 		# Get all hooks that match this criteria
 		hooks : list[Hook] = cls.get(name=name, namespace=namespace)
@@ -101,6 +106,7 @@ class Hooks:
 
 		Returns:
 			None
+
 		"""
 		cls._initialize_waypoint(name=name, namespace=namespace)
 
@@ -132,6 +138,7 @@ class Hooks:
 
 		Returns:
 			int: The number of hooks registered to this name and namespace.
+
 		"""
 		# Grab all waypoints that match the criteria
 		waypoints = cls.get_waypoints(name, namespace)
@@ -153,6 +160,7 @@ class Hooks:
 
 		Returns:
 			bool: True if a waypoint exists here, False if no waypoint can be found with this name/namespace.
+
 		"""
 		# No waypoint registered because this name/namespace hasn't been defined.
 		if namespace not in cls._hooks or name not in cls._hooks[namespace]:
@@ -179,6 +187,7 @@ class Hooks:
 
 		Returns:
 			Waypoint | None: A waypoint, if one was registered. Otherwise None.
+
 		"""
 		# No waypoint registered because this name/namespace hasn't been defined.
 		if namespace not in cls._hooks or name not in cls._hooks[namespace]:
@@ -204,6 +213,7 @@ class Hooks:
 
 		Raises:
 			ValueError: If a name is specified, but namespace is None
+
 		"""
 		if namespace is None:
 			if name is None:
@@ -239,6 +249,7 @@ class Hooks:
 
 		Returns:
 			int: The number of hooks registered to this name and namespace.
+
 		"""
 		# Allow get() to do the heavy lifting.
 		return len(cls.get(name, namespace))
@@ -297,6 +308,7 @@ class Hooks:
 
 		Returns:
 			None
+
 		"""
 		if namespace not in cls._hooks:
 			# initialize the namespace

@@ -1,32 +1,35 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: memory.py
-		Project: Django Foundry
-		Created Date: 19 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: memory.py
+Project: Django Foundry
+Created Date: 19 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Thu Apr 20 2023
-		Modified By: Jess Mann
+Last Modified: Thu Apr 20 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 import tracemalloc
-from django.http import JsonResponse
-from django.views import View
-from django.shortcuts import render
+
 import psutil
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views import View
+
 
 class MemoryMonitorView(View):
 	"""
 	Display the current memory usage of the application
 	"""
+
 	template_name = 'memory.html'
 
 	def get(self, request, *args, **kwargs):

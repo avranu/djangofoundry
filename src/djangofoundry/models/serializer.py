@@ -1,25 +1,27 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: serializer.py
-		Project: Django Foundry
-		Created Date: 12 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: serializer.py
+Project: Django Foundry
+Created Date: 12 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Apr 22 2023
-		Modified By: Jess Mann
+Last Modified: Sat Apr 22 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from rest_framework.serializers import ModelSerializer
+
 
 class Serializer(ModelSerializer):
 	"""
@@ -59,6 +61,7 @@ class Serializer(ModelSerializer):
 
 		Returns:
 			list: A truncated list of cls.get_fieldnames()
+
 		"""
 		fields = cls.get_fieldnames()
 		for field in cls.Meta.generated_fields:
@@ -70,6 +73,7 @@ class Serializer(ModelSerializer):
 		"""
 		Serializer metadata.
 		"""
+
 		fields = [
 			'id'
 		]

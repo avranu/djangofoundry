@@ -1,40 +1,43 @@
-"""*****************************************************************************
- *                                                                             *
- * Metadata:                                                                   *
- *                                                                             *
- * 	File: db.py                                                                *
- * 	Project: django-foundry                                                    *
- * 	Created: 08 Jun 2023                                                       *
- * 	Author: Jess Mann                                                          *
- * 	Email: jess.a.mann@gmail.com                                               *
- *                                                                             *
- * 	-----                                                                      *
- *                                                                             *
- * 	Last Modified: Mon Oct 02 2023                                             *
- * 	Modified By: Jess Mann                                                     *
- *                                                                             *
- * 	-----                                                                      *
- *                                                                             *
- * 	Copyright (c) 2023 Jess Mann                                               *
- ****************************************************************************"""
+"""
+*****************************************************************************
+*                                                                             *
+* Metadata:                                                                   *
+*                                                                             *
+* 	File: db.py                                                                *
+* 	Project: django-foundry                                                    *
+* 	Created: 08 Jun 2023                                                       *
+* 	Author: Jess Mann                                                          *
+* 	Email: jess.a.mann@gmail.com                                               *
+*                                                                             *
+* 	-----                                                                      *
+*                                                                             *
+* 	Last Modified: Mon Oct 02 2023                                             *
+* 	Modified By: Jess Mann                                                     *
+*                                                                             *
+* 	-----                                                                      *
+*                                                                             *
+* 	Copyright (c) 2023 Jess Mann                                               *
+****************************************************************************
+"""
 #!/usr/bin/env python
 
 # Generic imports
 import argparse
-import textwrap
-import os
-import re
-import pathlib
-import shutil
-import sys
-import subprocess
-from shutil import which
-import time
 import logging
+import os
+import pathlib
+import re
+import shutil
+import subprocess
+import sys
+import textwrap
+import time
+from shutil import which
+
 # Our imports
 from djangofoundry.scripts.db.choices import Actions, PostgresStatusCodes
 from djangofoundry.scripts.db.constants import DEFAULT_DATA_PATH, DEFAULT_LOG_PATH, EXE
-from djangofoundry.scripts.db.functions import db_action, REGISTERED_ACTIONS
+from djangofoundry.scripts.db.functions import REGISTERED_ACTIONS, db_action
 from djangofoundry.scripts.utils.action import EnumAction
 
 # Set up logging
@@ -53,7 +56,9 @@ class Db:
 			The user to run the database as.
 		database (str):
 			The name of the database to use.
+
 	"""
+
 	_data_path : str
 	_log_path : str
 	_user : str
@@ -85,6 +90,7 @@ class Db:
 
 		Returns:
 			None
+
 		"""
 		self._log_path = self.sanitize_path(user_input_path)
 
@@ -98,6 +104,7 @@ class Db:
 
 		Returns:
 			None
+
 		"""
 		self._data_path = self.sanitize_path(user_input_path)
 
@@ -120,6 +127,7 @@ class Db:
 		Raises:
 			ValueError: If the config options provided are not valid, or the files they reference are not found.
 			FileNotFoundError: If the postgres executable cannot be found.
+
 		"""
 		# Validation
 		if not os.path.isdir(data_path):
@@ -142,6 +150,7 @@ class Db:
 
 		Returns:
 			None
+
 		"""
 		if not os.path.isdir(self.data_path):
 			os.makedirs(self.data_path)
@@ -160,6 +169,7 @@ class Db:
 
 		Raises:
 			ValueError: If the new path is not valid.
+
 		"""
 		# Validate the new path
 		new_path = self.sanitize_path(new_path)
@@ -185,6 +195,7 @@ class Db:
 
 		Returns:
 			bool: True if the server is running now (regardless of whether we had to start it), False otherwise. 
+
 		"""
 		# If we're already running, then just return right away.
 		if self.is_running():
@@ -210,6 +221,7 @@ class Db:
 
 		Returns:
 			bool: True if the server is running now (regardless of whether we had to start it), False otherwise.
+
 		"""
 		result = subprocess.run([EXE, '-D', self.data_path, '-l', self.log_path, 'restart'], check=True).returncode
 
@@ -229,6 +241,7 @@ class Db:
 
 		Returns:
 			bool: True if the server is stopped now (regardless of whether we had to stop it), False if it is still running.
+
 		"""
 		try:
 			result = subprocess.run([EXE, '-D', self.data_path, '-l', self.log_path, 'stop'], check=True).returncode
@@ -258,6 +271,7 @@ class Db:
 
 		Returns:
 			bool: True if it is running, False otherwise. 
+
 		"""
 		result = subprocess.run([EXE, '-D', self.data_path, '-l', self.log_path, 'status'], check=False).returncode
 
@@ -276,6 +290,7 @@ class Db:
 
 		Returns:
 			bool: True if there are no errors (i.e. success), False if we detect errrors (i.e. failure).
+
 		"""
 		cmd = ['psql', '-U', self.user, '-d', self.database, '-c', "SELECT * FROM pg_stat_database_conflicts WHERE datname = current_database();"]
 		result = subprocess.call(cmd)
@@ -349,6 +364,7 @@ class Db:
 
 		Raises:
 			FileNotFoundError: If postgres is not able to find the data directory
+
 		"""
 		# Create a child process, supressing output
 		child = subprocess.run([EXE, '-D', self.data_path, 'status'], stdout = subprocess.PIPE)
@@ -378,6 +394,7 @@ class Db:
 
 		Returns:
 			str: The sanitized path
+
 		"""
 		# Convert to a string if it is a pathlib.Path
 		if isinstance(user_input_path, pathlib.Path):
@@ -402,6 +419,7 @@ class Db:
 		
 		Returns:
 			int: The exit code of the action
+
 		"""
 		# Convert the action to an string
 		if isinstance(action, Actions):

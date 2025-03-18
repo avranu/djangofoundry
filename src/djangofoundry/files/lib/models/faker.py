@@ -1,9 +1,11 @@
 
 from __future__ import annotations
-import datetime
-import faker
 
+import datetime
+
+import faker
 from django.utils import timezone
+
 
 class Faker:
 

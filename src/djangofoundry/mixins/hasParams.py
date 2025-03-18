@@ -1,27 +1,29 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: mixins.py
-		Project: Django Foundry
-		Created Date: 15 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: mixins.py
+Project: Django Foundry
+Created Date: 15 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Fri Dec 02 2022
-		Modified By: Jess Mann
+Last Modified: Fri Dec 02 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 from __future__ import annotations
+
+import logging
+import re
+
 # Generic imports
 from typing import Iterable, TypeVar
-import re
-import logging
 
 # Get a logger for logging messages
 #
@@ -44,7 +46,9 @@ class HasParams:
 		kwargs (Iterable[dict]):
 			The (unsanitized) parameters passed to us via url.
 			NOTE: This is defined by django controllers and overrides our definition. We include it here only for standalone type checking purposes.
+
 	"""
+
 	kwargs: Iterable[dict]
 
 	def get_param(self, name : str, sanitize : bool = True, required : bool = False) -> str | None:
@@ -64,6 +68,7 @@ class HasParams:
 
 		Raises:
 			ReferenceError: If the parameter is missing and required is True.
+
 		"""
 		# If it's found, then return it.
 		if name in self.kwargs:
@@ -99,6 +104,7 @@ class HasParams:
 		Raises:
 			ReferenceError: If the parameter is missing
 			TypeError: If the parameter is found but is None
+
 		"""
 		value = self.get_param(name, sanitize=sanitize, required=True)
 
@@ -123,6 +129,7 @@ class HasParams:
 
 		Returns:
 			str: The sanitized value.
+
 		"""
 		# Remove any character besides letters, numbers, and an underscore/comma, then truncate to a max of 500 characters.
 		return re.sub(r'[^a-zA-Z0-9_,-]+', '', value)[:500]
@@ -140,6 +147,7 @@ class HasParams:
 
 		Returns:
 			int: The sanitized value as an int
+
 		"""
 		# Strip any non-numeric characters from the value
 		result = re.sub(r'[^0-9]+', '', value)
@@ -166,6 +174,7 @@ class HasParams:
 
 		Raises:
 			ValueError: If param_type is not a supported type.
+
 		"""
 		match param_type:
 			case str():

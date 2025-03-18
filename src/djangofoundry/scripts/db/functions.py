@@ -1,6 +1,6 @@
+import logging
 import pathlib
 from typing import Callable
-import logging
 
 from djangofoundry.scripts.db.choices import Actions
 
@@ -26,6 +26,7 @@ def get_app_dir( directory : str ) -> pathlib.Path:
 		PosixPath('/home/jess/postgres/logs')
 		>>> get_app_dirs("invalid")
 		Traceback (most recent call last):
+
 	"""
 	home_dir = pathlib.Path.home()
 

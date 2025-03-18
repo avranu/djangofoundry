@@ -1,3 +1,1 @@
-from dashboard.models.abstract import (
-    DashboardModel, DashboardQueue, DashboardManager, DashboardQuerySet
-)
+from dashboard.models.abstract import DashboardManager, DashboardModel, DashboardQuerySet, DashboardQueue

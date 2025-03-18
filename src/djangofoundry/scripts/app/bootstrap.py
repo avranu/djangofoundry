@@ -1,4 +1,5 @@
-"""*********************************************************************************************************************
+"""
+*********************************************************************************************************************
 *                                                                                                                      *
 *                                                                                                                      *
 *                                                                                                                      *
@@ -21,18 +22,22 @@
 *                                                                                                                      *
 *        2025-03-17     By Jess Mann                                                                                   *
 *                                                                                                                      *
-*********************************************************************************************************************"""
+*********************************************************************************************************************
+"""
 from __future__ import annotations
+
+import logging
 import os
-from pathlib import Path
-import sys
 import shutil
 import subprocess
-import logging
+import sys
+from pathlib import Path
+from typing import Optional
+
+import psutil
+
 from djangofoundry.scripts.utils.exceptions import DbStartError
 from djangofoundry.scripts.utils.settings import DEFAULT_SETTINGS_PATH
-import psutil
-from typing import Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s', handlers=[logging.StreamHandler()])
@@ -44,6 +49,7 @@ class Bootstrap:
     """
     Handles project setup tasks for a Django project using modern tools like uv and bun.
     """
+
     def __init__(self, project_name: str | None = None, directory: str = '.'):
         if not project_name:
             # Get the name of the current directory
@@ -98,9 +104,9 @@ class Bootstrap:
             
             logger.debug(f"Running command: {' '.join(cmd)}")
             process = subprocess.run(
-                cmd, 
-                check=True, 
-                capture_output=True, 
+                cmd,
+                check=True,
+                capture_output=True,
                 text=True
             )
             if process.stdout:
@@ -178,7 +184,7 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
 
         # Use sed to replace {package_name} with the project name in both files
         self.run_command([
-            "sed", "-i", f"s/{{package_name}}/{self.project_name}/g", 
+            "sed", "-i", f"s/{{package_name}}/{self.project_name}/g",
             str(project_pyproject), str(package_json)
         ])
 
@@ -247,7 +253,7 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
         # Development dependencies
         dev_tools = [
             "ruff", "pyright", "mypy", "pre-commit",
-            "bandit", "coverage", "hypothesis", 
+            "bandit", "coverage", "hypothesis",
             "pydoctor", "pytest", "pytest-cov", "flake8",
             "model-bakery",
         ]
@@ -270,8 +276,8 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
             
         # Create Django project
         self.run_command([
-            "django-admin", "startproject", 
-            self.project_name, 
+            "django-admin", "startproject",
+            self.project_name,
             self.project_src_dir
         ], cwd=self.directory)
 

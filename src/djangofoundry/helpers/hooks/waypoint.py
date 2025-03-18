@@ -1,26 +1,28 @@
 """
-	Represents a hook waypoint, which is a place in our code where a hook can be registered and run.
+Represents a hook waypoint, which is a place in our code where a hook can be registered and run.
 
-	Metadata:
+Metadata:
 
-		File: waypoint.py
-		Project: Django Foundry
-		Created Date: 02 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: waypoint.py
+Project: Django Foundry
+Created Date: 02 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Iterable
+
 from djangofoundry.helpers.hooks.meta.constants import DEFAULT_NAMESPACE
 
 if TYPE_CHECKING:
@@ -43,7 +45,9 @@ class Waypoint:
 			The type that all hooks at this waypoint return when they are run.
 		hooks (list[Hook]):
 			The list of hooks registered at this waypoint.
+
 	"""
+
 	name : str
 	namespace : str
 	positional_arguments : int
@@ -83,6 +87,7 @@ class Waypoint:
 			Iterable[Any]:
 				Returns a list of all return values for the hooks run.
 				This will actually be an iterable of self.return_type, but we can't typehint based on variables passed in during init.
+
 		"""
 		# Sort the hooks by priority
 		self.hooks.sort(key = lambda x: x.priority, reverse=True)

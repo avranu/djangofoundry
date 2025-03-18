@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 from djangofoundry.controllers.list import ListController
+
 from dashboard.models.abstract import DashboardQuerySet
+
 
 class IndexController(ListController):
 

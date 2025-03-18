@@ -5,15 +5,13 @@ from abc import ABC
 from decimal import Decimal
 from functools import singledispatchmethod
 from typing import TYPE_CHECKING, Any, Generic, Iterator, Self
-from typing_extensions import TypeVar
 
 # Django Imports
 import django.db.models
-from django.db.models import Sum
+from django.db.models import Field, Sum
 from djangofoundry import models as foundry
-from django.db.models import Field
 from djangofoundry.helpers import queue
-
+from typing_extensions import TypeVar
 
 # App imports
 from lib.models.faker import fake

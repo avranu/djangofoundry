@@ -1,30 +1,33 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: lint.py
-		Project: Django Foundry
-		Created Date: 18 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: lint.py
+Project: Django Foundry
+Created Date: 18 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Fri Apr 28 2023
-		Modified By: Jess Mann
+Last Modified: Fri Apr 28 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
-import os
+
 import argparse
-import re
 import glob
-import yaml
+import os
+import re
+
 import openai
+import yaml
 from tqdm import tqdm
+
 
 class ChatGPTBugFixer:
 	def __init__(self, api_key, args):

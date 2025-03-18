@@ -1,30 +1,33 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: settings.py
-		Project: Django Foundry
-		Created Date: 16 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: settings.py
+Project: Django Foundry
+Created Date: 16 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
-import os
-from typing import Any
+
 import logging
 import logging.config
+import os
+from typing import Any
+
 import yaml
 from yaml.loader import SafeLoader
+
 # App imports
 from djangofoundry.scripts.utils.exceptions import FileEmptyError
 from djangofoundry.scripts.utils.types import SettingsFile, SettingsLog
@@ -37,6 +40,7 @@ class Settings:
 
 	These are loaded from the file at SETTINGS_PATH (currently bin/conf/settings.yaml).
 	"""
+
 	_settings : SettingsFile | None = None
 	_logging_setup : bool = False
 
@@ -114,6 +118,7 @@ class Settings:
 
 		Returns:
 			dict: A dictionary of settings.
+
 		"""
 		return self.settings
 
@@ -127,6 +132,7 @@ class Settings:
 
 		Returns:
 			Any: The value stored at the provided key
+
 		"""
 		return self.settings.get(key)
 

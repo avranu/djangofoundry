@@ -1,37 +1,40 @@
 """
-	This module contains all our abstract classes for our other models to inherit from.
+This module contains all our abstract classes for our other models to inherit from.
 
-	Every model in every application throughout our software should inherit from this Model class.
+Every model in every application throughout our software should inherit from this Model class.
 
-	Metadata:
+Metadata:
 
-		File: model.py
-		Project: Django Foundry
-		Created Date: 18 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: model.py
+Project: Django Foundry
+Created Date: 18 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Mon Apr 24 2023
-		Modified By: Jess Mann
+Last Modified: Mon Apr 24 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 
 """
 # Generic imports
 from __future__ import annotations
-from typing import Iterable, Optional
+
 import logging
-# Django Imports
-from django.db import models
+from typing import Iterable, Optional
+
 # Django extensions
 import auto_prefetch
+
+# Django Imports
+from django.db import models
+
 # Lib Imports
 from djangofoundry.mixins import Hookable
-from djangofoundry.models.manager import PostgresManager
 
 # Set up a logger for this module.
 #
@@ -45,15 +48,7 @@ class Model(auto_prefetch.Model, Hookable):
 	"""
 	An abstract class for interacting with DB tables. All models in every part of our software should inherit from this class.
 
-	Attributes:
-		postgres (PostgresManager):
-			The Manager for interacting with PostgreSQL.
-			This works exactly the same way our normal Manager does. Instead of model.objects.all(), you can call model.postgres.all()
-			However, the postgres manager implements postgres-specific functionality that our normal manager does not.
-			TODO: [Auto-359] maybe refactor this into a more elegant solution
 	"""
-
-	postgres : PostgresManager = PostgresManager()
 
 	@property
 	def model_name(self) -> str:
@@ -153,6 +148,7 @@ class Model(auto_prefetch.Model, Hookable):
 
 		Returns:
 			str: The name of the model (stored in Meta.verbose_name)
+
 		"""
 		return self._meta.verbose_name or self._meta.model_name or self.__class__.__name__
 
@@ -162,6 +158,7 @@ class Model(auto_prefetch.Model, Hookable):
 
 		Returns:
 			str: The plural name of the model (stored in Meta.verbose_name_plural)
+
 		"""
 		return self._meta.verbose_name_plural or self._meta.model_name or self.__class__.__name__
 
@@ -171,6 +168,7 @@ class Model(auto_prefetch.Model, Hookable):
 
 		Returns:
 			str: A string representation of every attribute within this model instance
+
 		"""
 		return str(self.to_dict())
 
@@ -180,6 +178,7 @@ class Model(auto_prefetch.Model, Hookable):
 
 		Returns:
 			str: A string representation of this model instance very simply.
+
 		"""
 		return f'{self.get_name()} {self.pk}'
 
@@ -194,5 +193,7 @@ class Model(auto_prefetch.Model, Hookable):
 				A list of attributes which form unique keys
 			indexes (list of Index):
 				A list of indexes to create on the table
+
 		"""
+
 		abstract = True

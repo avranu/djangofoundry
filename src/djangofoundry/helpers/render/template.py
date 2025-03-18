@@ -1,23 +1,24 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: template.py
-		Project: Django Foundry
-		Created Date: 09 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: template.py
+Project: Django Foundry
+Created Date: 09 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sun Apr 09 2023
-		Modified By: Jess Mann
+Last Modified: Sun Apr 09 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
+
 import logging
 from abc import ABC, abstractmethod
 
@@ -31,7 +32,9 @@ class TemplateHelper(ABC):
 	Attributes:
 		template_path (str): The path to the templates.
 		template_suffix (str): The suffix for the templates.
+
 	"""
+
 	_app_name: str
 	template_path: str
 	template_suffix: str
@@ -47,6 +50,7 @@ class TemplateHelper(ABC):
 
 		Raises:
 			ValueError: If app_name is None.
+
 		"""
 		if app_name is None:
 			raise ValueError('app_name cannot be None')
@@ -63,6 +67,7 @@ class TemplateHelper(ABC):
 
 		Returns:
 			str: The name of the app to load the templates from.
+
 		"""
 		return self._app_name
 
@@ -73,6 +78,7 @@ class TemplateHelper(ABC):
 
 		Returns:
 			str: The name of the app to load the templates from.
+
 		"""
 		return self.app_name
 
@@ -93,5 +99,6 @@ class TemplateHelper(ABC):
 
 		Returns:
 			str: The rendered template.
+
 		"""
 		raise NotImplementedError("Subclasses of TemplateHelper must implement render()")

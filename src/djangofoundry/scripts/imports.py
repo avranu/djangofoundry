@@ -1,28 +1,29 @@
 """
 	
-	Metadata:
+Metadata:
 	
-		File: imports.py
-		Project: django-foundry
-		Created Date: 14 Jun 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: imports.py
+Project: django-foundry
+Created Date: 14 Jun 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 	
-		-----
+-----
 	
-		Last Modified: Wed Jun 14 2023
-		Modified By: Jess Mann
+Last Modified: Wed Jun 14 2023
+Modified By: Jess Mann
 	
-		-----
+-----
 	
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
-import os
-import re
 import argparse
 import logging
+import os
+import re
 import sys
 from collections import defaultdict
+
 
 class ImportProcessor:
     def __init__(self, path):

@@ -1,33 +1,37 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: model.py
-		Project: Django Foundry
-		Created Date: 09 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: model.py
+Project: Django Foundry
+Created Date: 09 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Thu Apr 13 2023
-		Modified By: Jess Mann
+Last Modified: Thu Apr 13 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
+
 import logging
 import re
 from typing import Optional
-from jinja2 import TemplateNotFound
+
 # DJANGO imports
 from django.db import connections
 from django.db.backends.utils import CursorWrapper
-# LIB imports
-from djangofoundry.helpers.render.meta.model import IndexInfo, IndexColumnInfo, ColumnInfo, ConstraintInfo
+from jinja2 import TemplateNotFound
+
 from djangofoundry.helpers.render.jinja.code.python.template import PythonHelper
+
+# LIB imports
+from djangofoundry.helpers.render.meta.model import ColumnInfo, ConstraintInfo, IndexColumnInfo, IndexInfo
 from djangofoundry.models import Model
 
 # Set up logging for this module
@@ -37,6 +41,7 @@ class ModelHelper(PythonHelper):
 	"""
 	A helper class for rendering jinja templates that create django models.
 	"""
+
 	template_path: str = 'templates/jinja'
 	_table_name : str
 	_database : str
@@ -84,6 +89,7 @@ class ModelHelper(PythonHelper):
 		Args:
 			template_suffix (str): The suffix to use for template files (defaults to ".py.jinja")
 			table_name (str): The name of the table to generate a model for
+
 		"""
 		self._table_name = table_name
 		self._database = database
@@ -99,6 +105,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			str: The suggested model name
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -121,6 +128,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			str: The cleaned table name
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -150,6 +158,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			list[IndexInfo]: The filtered list of indexes
+
 		"""
 		unique_indexes = []
 		for index in indexes:
@@ -166,6 +175,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			list[ColumnInfo]: The list of columns for the given table
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -207,6 +217,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			list[ConstraintInfo]: The list of constraints for the given table
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -244,6 +255,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			list[IndexInfo]: The list of indexes for the given table
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -278,6 +290,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			int: The row count for the given table
+
 		"""
 		if not table_name:
 			table_name = self.table_name
@@ -302,6 +315,7 @@ class ModelHelper(PythonHelper):
 
 		Returns:
 			str: The rendered template.
+
 		"""
 		try:
 			template = self.env.get_template(template_name + self.template_suffix)

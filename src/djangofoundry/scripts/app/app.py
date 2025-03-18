@@ -1,4 +1,5 @@
-"""*********************************************************************************************************************
+"""
+*********************************************************************************************************************
 *                                                                                                                      *
 *                                                                                                                      *
 *                                                                                                                      *
@@ -21,24 +22,28 @@
 *                                                                                                                      *
 *        2025-03-17     By Jess Mann                                                                                   *
 *                                                                                                                      *
-*********************************************************************************************************************"""
+*********************************************************************************************************************
+"""
 
 #!/usr/bin/env python
 from __future__ import annotations
+
+import logging
 import os
 import re
-import sys
 import subprocess
-import logging
-import psutil
-from typing import Any, Callable, Optional
+import sys
 from pathlib import Path
+from typing import Any, Callable, Optional
+
+import psutil
+
+from djangofoundry.scripts.app.actions import Actions
+from djangofoundry.scripts.db.db import Db
 
 # Our imports
 from djangofoundry.scripts.utils.exceptions import DbStartError, UnsupportedCommandError
-from djangofoundry.scripts.utils.settings import Settings, DEFAULT_SETTINGS_PATH
-from djangofoundry.scripts.db.db import Db
-from djangofoundry.scripts.app.actions import Actions
+from djangofoundry.scripts.utils.settings import DEFAULT_SETTINGS_PATH, Settings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -49,14 +54,15 @@ class App:
     Main application class for managing a Django server.
     Handles starting, stopping, testing, and other runtime operations.
     """
+
     _command: Optional[Actions] = None
     _output_buffer: str = ''
     
     def __init__(
-        self, 
-        project_name: str = 'myproject', 
-        settings: Optional[Settings] = None, 
-        directory: str = '.', 
+        self,
+        project_name: str = 'myproject',
+        settings: Optional[Settings] = None,
+        directory: str = '.',
         backend_dir: str = 'src'
     ):
         self.project_name = project_name
@@ -97,8 +103,8 @@ class App:
             input_str = ['python', str(manage_py), f'{command}'] + list(args)
 
             with subprocess.Popen(
-                input_str, 
-                stdout=subprocess.PIPE, 
+                input_str,
+                stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True
             ) as process:
@@ -126,8 +132,8 @@ class App:
         Run a subprocess with the given command list.
         """
         with subprocess.Popen(
-            cmd_list, 
-            stdout=subprocess.PIPE, 
+            cmd_list,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True
         ) as process:
@@ -221,8 +227,8 @@ class App:
         """
         logger.debug('Starting browsersync')
         with subprocess.Popen(
-            ['bun', 'run', 'serve'], 
-            stdout=subprocess.PIPE, 
+            ['bun', 'run', 'serve'],
+            stdout=subprocess.PIPE,
             text=True
         ) as process:
             if not process.stdout:
@@ -380,8 +386,8 @@ def main():
         command = Actions(args.action)
         
         result = app.perform(
-            command, 
-            page_name=args.page_name, 
+            command,
+            page_name=args.page_name,
             model_name=args.model_name
         )
         

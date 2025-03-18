@@ -5,7 +5,9 @@ TODO App.py needs to be modified to use this.
 """
 import argparse
 import importlib
+
 from djangofoundry.scripts.app.actions import Actions
+
 
 class UnsupportedCommandError(Exception):
 	"""
@@ -14,7 +16,7 @@ class UnsupportedCommandError(Exception):
 
 def main():
 	parser = argparse.ArgumentParser(description='Setup and manage the Django application.')
-	parser.add_argument('action', choices=[e.value for e in Actions], help='The action to perform.')    
+	parser.add_argument('action', choices=[e.value for e in Actions], help='The action to perform.')
 	parser.add_argument('-p', '--project-name', default='myproject', help='The name of the project.')
 	parser.add_argument('-a', '--author-name', help='The name of the author.')
 	parser.add_argument('-d', '--directory', default='.', help='The directory for the project.')

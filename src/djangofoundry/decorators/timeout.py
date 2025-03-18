@@ -1,35 +1,36 @@
 """
 
 
-	Metadata:
+Metadata:
 
-		File: timeout.py
-		Project: Django Foundry
-		Created Date: 03 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: timeout.py
+Project: Django Foundry
+Created Date: 03 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 
 """
 # Generic imports
 from __future__ import annotations
-import signal
+
 import functools
+import signal
 
 
 def timeout(seconds : int, error_message : str = 'Function call timed out'):
-	'''
+	"""
 	Based on: https://wiki.python.org/moin/PythonDecoratorLibrary#Function_Timeout
 	Example:  @timeout(1, 'Function slow; aborted')
-	'''
+	"""
 	def decorated(func):
 		def _handle_timeout(signum, frame):
 			raise TimeoutError(error_message)

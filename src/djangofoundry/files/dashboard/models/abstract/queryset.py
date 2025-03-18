@@ -5,8 +5,8 @@ from abc import ABC
 from decimal import Decimal
 from functools import singledispatchmethod
 from typing import TYPE_CHECKING, Any, Generic, Iterator, Self
-from typing_extensions import TypeVar
 
+from typing_extensions import TypeVar
 
 # App imports
 from lib import models

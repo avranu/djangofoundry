@@ -1,3 +1,1 @@
-from lib.models.abstract import (
-    LibModel, LibQueue, LibManager, LibQuerySet
-)
+from lib.models.abstract import LibManager, LibModel, LibQuerySet, LibQueue

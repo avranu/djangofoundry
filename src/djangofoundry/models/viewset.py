@@ -1,29 +1,32 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: viewset.py
-		Project: Django Foundry
-		Created Date: 12 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: viewset.py
+Project: Django Foundry
+Created Date: 12 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Mon Apr 10 2023
-		Modified By: Jess Mann
+Last Modified: Mon Apr 10 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 # Django Imports
 # Third party imports
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ReadOnlyModelViewSet
+
 # App imports
 from djangofoundry.mixins import HasParams
 from djangofoundry.models.serializer import Serializer
@@ -36,6 +39,7 @@ class ViewSet(HasParams, ReadOnlyModelViewSet):
 	"""
 	An abstract viewset class that provides a default implementation for the get_queryset method, and allows for filtering and ordering of the queryset.
 	"""
+
 	serializer_class = Serializer
 	filter_backends = [OrderingFilter]
 	filterset_fields : list[str] = []
@@ -55,6 +59,7 @@ class ViewSet(HasParams, ReadOnlyModelViewSet):
 		Example:
 			>>> queryset = self.apply_filters(queryset)
 			<QuerySet [<Case: Case object (1)>, <Case: Case object (2)>]>
+
 		"""
 		# Allow all filters in filterset_fields to be applied to the queryset
 		for filter_field in self.filterset_fields:

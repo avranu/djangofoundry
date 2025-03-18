@@ -1,28 +1,31 @@
 """
 
 
-	Metadata:
+Metadata:
 
-		File: dirtyfields.py
-		Project: Django Foundry
-		Created Date: 23 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: dirtyfields.py
+Project: Django Foundry
+Created Date: 23 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 
 """
 # Generic imports
 from __future__ import annotations
+
 from typing import Optional
+
 from dirtyfields import DirtyFieldsMixin
+
 
 class DirtyFields(DirtyFieldsMixin):
 	"""
@@ -46,7 +49,7 @@ class DirtyFields(DirtyFieldsMixin):
 
 		Returns:
 			bool: True if the model state differs from when it was loaded from the DB. False if it is the same.
-		"""
 
+		"""
 		# Outsource the work to our parent implementation. We only wanted to change the defaults.
 		return super().is_dirty(check_relationship=check_relationship, check_m2m=check_m2m)

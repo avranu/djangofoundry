@@ -1,29 +1,29 @@
 """
-	Custom argparse Action.
+Custom argparse Action.
 
-	Modified from https://stackoverflow.com/questions/43968006/support-for-enum-arguments-in-argparse
+Modified from https://stackoverflow.com/questions/43968006/support-for-enum-arguments-in-argparse
 
-	Metadata:
+Metadata:
 
-		File: action.py
-		Project: Django Foundry
-		Created Date: 06 Sep 2022
-		Author: Alexander Lanin, Tim, Jess Mann
-		Email: jess.a.mann@gmail.com
+File: action.py
+Project: Django Foundry
+Created Date: 06 Sep 2022
+Author: Alexander Lanin, Tim, Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 import argparse
 import enum
-from typing import Any, Optional
 import logging
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 

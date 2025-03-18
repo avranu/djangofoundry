@@ -1,7 +1,8 @@
-import subprocess
-import toml
-import logging
 import argparse
+import logging
+import subprocess
+
+import toml
 
 logging.basicConfig(level=logging.INFO)
 

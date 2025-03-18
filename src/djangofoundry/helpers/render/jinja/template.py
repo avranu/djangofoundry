@@ -1,26 +1,29 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: template.py
-		Project: Django Foundry
-		Created Date: 09 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: template.py
+Project: Django Foundry
+Created Date: 09 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Thu Apr 13 2023
-		Modified By: Jess Mann
+Last Modified: Thu Apr 13 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
+
 import logging
-from jinja2 import Environment, PackageLoader, select_autoescape, TemplateNotFound
+
+from jinja2 import Environment, PackageLoader, TemplateNotFound, select_autoescape
 from pyparsing import Optional
+
 from djangofoundry.helpers.render.template import TemplateHelper as BaseTemplate
 
 # Set up logging for this module
@@ -32,7 +35,9 @@ class TemplateHelper(BaseTemplate):
 
 	Attributes:
 		env (Environment): The jinja environment.
+
 	"""
+
 	_env: Environment
 	template_path: str = 'templates/jinja'
 	template_suffix: str = '.jinja'
@@ -49,6 +54,7 @@ class TemplateHelper(BaseTemplate):
 
 		Raises:
 			ValueError: If app_name is None.
+
 		"""
 		if app_name is None:
 			raise ValueError('app_name cannot be None')
@@ -67,6 +73,7 @@ class TemplateHelper(BaseTemplate):
 
 		Returns:
 			Environment: The jinja environment.
+
 		"""
 		return self._env
 
@@ -90,6 +97,7 @@ class TemplateHelper(BaseTemplate):
 
 		Returns:
 			str: The rendered template.
+
 		"""
 		try:
 			template = self.env.get_template(template_name + self.template_suffix)

@@ -1,27 +1,31 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: thefuzz.py
-		Project: Django Foundry
-		Created Date: 26 Mar 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: thefuzz.py
+Project: Django Foundry
+Created Date: 26 Mar 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Wed May 10 2023
-		Modified By: Jess Mann
+Last Modified: Wed May 10 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 
 from __future__ import annotations
+
 from typing import Iterable
+
 from thefuzz import fuzz, process
+
 from djangofoundry.matching.engine import MatchingEngine
+
 
 class TheFuzz(MatchingEngine):
 	"""
@@ -47,6 +51,7 @@ class TheFuzz(MatchingEngine):
 
 			Match: The matching choice, or None
 			Confidence: The confidence of the match, from 1-100
+
 		"""
 		results = process.extractOne(str(input_str), choices, score_cutoff=required_confidence)
 
@@ -84,6 +89,7 @@ class TheFuzz(MatchingEngine):
 
 				100 means we are certain they match.
 				1 means we are certain they do not match.
+
 		"""
 		return fuzz.ratio(input_str, compare)
 
@@ -107,6 +113,7 @@ class TheFuzz(MatchingEngine):
 
 				100 means we are certain they match.
 				1 means we are certain they do not match.
+
 		"""
 		return fuzz.partial_ratio(input_str, compare)
 
@@ -130,6 +137,7 @@ class TheFuzz(MatchingEngine):
 
 				100 means we are certain they match.
 				1 means we are certain they do not match.
+
 		"""
 		return fuzz.token_sort_ratio(input_str, compare)
 
@@ -153,5 +161,6 @@ class TheFuzz(MatchingEngine):
 
 				100 means we are certain they match.
 				1 means we are certain they do not match.
+
 		"""
 		return fuzz.token_set_ratio(input_str, compare)

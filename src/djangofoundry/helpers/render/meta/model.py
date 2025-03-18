@@ -1,29 +1,32 @@
 """
-	Metadata:
+Metadata:
 
-		File: model.py
-		Project: Django Foundry
-		Created Date: 11 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: model.py
+Project: Django Foundry
+Created Date: 11 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Fri Apr 14 2023
-		Modified By: Jess Mann
+Last Modified: Fri Apr 14 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
-from typing import Any, Optional
+
 from enum import Enum
+from typing import Any, Optional
+
 
 class ConstraintType(Enum):
 	"""
 	Possible constraints for a column in Oracle
 	"""
+
 	PRIMARY_KEY = 'P'
 	UNIQUE = 'U'
 	FOREIGN_KEY = 'R'
@@ -37,6 +40,7 @@ class DbInfo:
 	Atributes:
 		name (str): The name of the database object
 	"""
+
 	name : str
 
 	def __init__(self, name : str, *args, **kwargs):
@@ -48,6 +52,7 @@ class DbInfo:
 
 		Returns:
 			str: The name of the database object
+
 		"""
 		return self.name
 
@@ -57,6 +62,7 @@ class DbInfo:
 
 		Returns:
 			str: The name of the database object
+
 		"""
 		return self.name
 
@@ -70,6 +76,7 @@ class TableInfo(DbInfo):
 		relevant (bool): Whether or not the table contains columns that are relevant to the project
 		rows (int): The number of rows in the table
 	"""
+
 	def __init__(self, name: str, has_model: bool, relevant: bool, marked : bool, rows: int, *args, **kwargs):
 		super().__init__(name)
 		self.has_model = has_model
@@ -99,6 +106,7 @@ class ColumnInfo(DbInfo):
 		precision (int): The precision of the column
 		scale (int): The scale of the column
 	"""
+
 	def __init__(
 		self,
 		name: str,
@@ -131,6 +139,7 @@ class ColumnInfo(DbInfo):
 
 		Returns:
 			str: The Django field type
+
 		"""
 		data_type_mapping = {
 			"VARCHAR2": 	"CharField",
@@ -171,6 +180,7 @@ class ConstraintInfo(DbInfo):
 		generated (str): Whether or not the constraint is generated
 		last_change (str): The last time the constraint was changed
 	"""
+
 	def __init__(self, name, constraint_type: ConstraintType, column_name, search_condition : Optional[str] = None, r_constraint_name : Optional[str] = None, r_owner : Optional[Any] = None, delete_rule : Optional[str] = None, status : Optional[str] = None, deferrable : Optional[str] = None, deferred : Optional[str] = None, validated : Optional[str] = None, generated : Optional[str] = None, last_change : Optional[str] = None, *args, **kwargs):
 		super().__init__(name)
 		self.constraint_type = constraint_type
@@ -194,6 +204,7 @@ class IndexColumnInfo(DbInfo):
 		name (str): The name of the column
 		position (int): The position of the column in the index
 	"""
+
 	def __init__(self, name: str, position: int):
 		super().__init__(name)
 		self.position = position
@@ -250,6 +261,7 @@ class IndexInfo(DbInfo):
 		Example:
 			>>> index = IndexInfo('index_name', 'UNIQUE')
 			>>> index.add_column('column_name', 1)
+
 		"""
 		index_column = IndexColumnInfo(column_name, column_position)
 		self.columns.append(index_column)
@@ -271,6 +283,7 @@ class ForeignKeyInfo:
 		referenced_column (str): The name of the column that the foreign key references
 		related_name (str): The name of the related name
 	"""
+
 	def __init__(self, column: str, constraint_type: ConstraintType, referenced_table: str, referenced_column: str, related_name: Optional[str] = None):
 		self.column = column
 		self.constraint_type = constraint_type
@@ -284,6 +297,7 @@ class ForeignKeyInfo:
 
 		Returns:
 			str: The name of the column
+
 		"""
 		return self.column
 
@@ -293,6 +307,7 @@ class ForeignKeyInfo:
 
 		Returns:
 			str: The name of the column
+
 		"""
 		return self.column
 

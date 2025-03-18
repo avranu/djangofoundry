@@ -1,37 +1,40 @@
 """
 
 
-	Metadata:
+Metadata:
 
-		File: progress.py
-		Project: Django Foundry
-		Created Date: 10 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: progress.py
+Project: Django Foundry
+Created Date: 10 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 
 """
 # Generic imports
 from __future__ import annotations
 
+from datetime import timedelta
 from decimal import Decimal
 from time import perf_counter_ns
 from typing import Optional
-from datetime import timedelta
-from typing_extensions import Self
-from celery_progress.backend import ProgressRecorder, PROGRESS_STATE
-from celery.app.task import Task
+
 import humanize
+from celery.app.task import Task
+from celery_progress.backend import PROGRESS_STATE, ProgressRecorder
+
 # Django Imports
 from django.db.models import TextChoices
+from typing_extensions import Self
+
 # Lib Imports
 # App Imports
 
@@ -39,6 +42,7 @@ class ProgressStates(TextChoices):
 	"""
 	Enum for the possible states of a progress bar.
 	"""
+
 	PROGRESS = PROGRESS_STATE
 	SUCCESS = 'SUCCESS'
 	FAILURE = 'FAILURE'
@@ -50,9 +54,9 @@ class ProgressStates(TextChoices):
 
 	@classmethod
 	def has_started(cls, state : Self | str) -> bool:
-		'''
+		"""
 		Checks if the given state is something AFTER "started".
-		'''
+		"""
 		return state not in [cls.STARTED, cls.PENDING]
 
 default_settings = {
@@ -60,11 +64,12 @@ default_settings = {
 }
 
 class ProgressBar(ProgressRecorder):
-	'''
+	"""
 	Override default ProgressRecorder object to provide a few extra features
 
 	TODO: Rewrite the whole ProgressRecorder module for python3
-	'''
+	"""
+
 	# Typehint the task. This doesn't change functionality at all, but helps with our IDE
 	task: Task | None
 	_state: str = 'PENDING'
@@ -76,7 +81,7 @@ class ProgressBar(ProgressRecorder):
 	settings : dict = default_settings
 
 	def __init__(self, task: Optional[Task] = None, total : int = 1, settings: Optional[dict] = None):
-		'''
+		"""
 		Initialize the ProgressBar with an optional task and settings.
 
 		Args:
@@ -109,7 +114,8 @@ class ProgressBar(ProgressRecorder):
 			progress.update()
 
 		Allow None for task, which will effectively suppress output
-		'''
+
+		"""
 		if settings is None:
 			settings = {}
 
@@ -137,24 +143,25 @@ class ProgressBar(ProgressRecorder):
 
 	@property
 	def start(self) -> int:
-		'''
+		"""
 		Get the time this job started (in ns)
-		'''
+		"""
 		return self._start_time
 
 	def _init_start(self):
-		'''
+		"""
 		Private method to set the start time
-		'''
+		"""
 		self._start_time = perf_counter_ns()
 
 	def restart_timer(self) -> int:
-		'''
+		"""
 		Restarts the timer and returns the previous elapsed time before the reset
 
 		Returns:
 			int: The previous elapsed time before the reset (in ns)
-		'''
+
+		"""
 		# This calculates our elapsed time in a @property. Save it here before we reset the timer.
 		elapsed = self.elapsed
 
@@ -165,22 +172,22 @@ class ProgressBar(ProgressRecorder):
 		return elapsed
 
 	def restart(self, total: int = 100, description: Optional[str] = None):
-		'''
+		"""
 		Convenience function for self.restart_timer(); self.update()
-		'''
+		"""
 		self.restart_timer()
 		self.update(current=1, total=total, description=description)
 
 	@property
 	def elapsed(self) -> int:
-		'''
+		"""
 		Get the time elapsed since start (in nanoseconds)
-		'''
+		"""
 		return perf_counter_ns() - self.start
 
 	@property
 	def eta(self) -> int | None:
-		'''
+		"""
 		Get an ETA to completion (in seconds)
 
 		Returns:
@@ -188,7 +195,8 @@ class ProgressBar(ProgressRecorder):
 
 		TODO: [AUTO-354] Add support for lambda functions for calculating eta on progress bars
 			Add support for passing in lambda functions for calculating this value
-		'''
+
+		"""
 		# Avoid division by 0
 		if not self.percent:
 			return None
@@ -214,16 +222,16 @@ class ProgressBar(ProgressRecorder):
 
 	@property
 	def description(self) -> str:
-		'''
+		"""
 		Get the task description. Default None
-		'''
+		"""
 		return self._description
 
 	@description.setter
 	def description(self, value: str) -> None:
-		'''
+		"""
 		Set the task description, but keep all other values the same
-		'''
+		"""
 		# Set our local value on this object
 		self._description = value
 
@@ -232,17 +240,17 @@ class ProgressBar(ProgressRecorder):
 
 	@property
 	def pending(self) -> bool:
-		'''
+		"""
 		Get the pending state of the task. Default False
-		'''
+		"""
 		return self._pending
 
 	@pending.setter
 	def pending(self, value: bool):
-		'''
+		"""
 		Set our pending state. This gets treated like a normal property (i.e. progress_bar.pending = True), but it runs
 		additional code (e.g. progress_bar.refresh_task_state()) whenever the pending state is changed.
-		'''
+		"""
 		# Set our local value on this object
 		self._pending = value
 
@@ -251,9 +259,9 @@ class ProgressBar(ProgressRecorder):
 
 	@property
 	def current(self) -> int:
-		'''
+		"""
 		Get the current number of items completed (out of total). Default 0
-		'''
+		"""
 		return self._current
 
 	@current.setter
@@ -265,7 +273,7 @@ class ProgressBar(ProgressRecorder):
 		self.refresh_task_state()
 
 	def next(self, description: Optional[str] = None, advance: int = 1) -> int:
-		'''
+		"""
 		Increase our current task by a given amount (default 1). Useful when we don't know our current status but know we've completed a task.
 
 		Args:
@@ -276,7 +284,8 @@ class ProgressBar(ProgressRecorder):
 
 		Returns:
 			int: The current counter after increasing it
-		'''
+
+		"""
 		# Increase it
 		self._current += advance
 
@@ -302,22 +311,24 @@ class ProgressBar(ProgressRecorder):
 
 		Returns:
 			int: The current counter after increasing it
+
 		"""
 		return self.next(description, amount)
 
 	@property
 	def total(self) -> int:
-		'''
+		"""
 		Get the total items for our task to complete. Default 1
 
 		Returns:
 			int: The total tasks
-		'''
+
+		"""
 		return self._total
 
 	@total.setter
 	def total(self, value: int) -> None:
-		'''
+		"""
 		Set the total items for our task to complete.
 
 		Args:
@@ -325,7 +336,8 @@ class ProgressBar(ProgressRecorder):
 
 		Returns:
 			Nothing
-		'''
+
+		"""
 		self._total = int(value)
 
 		# If a task exists, refresh it
@@ -333,9 +345,9 @@ class ProgressBar(ProgressRecorder):
 
 	@property
 	def percent(self) -> Decimal:
-		'''
+		"""
 		The percent complete. Default 0
-		'''
+		"""
 		# Avoid division by 0
 		if not self.total:
 			return Decimal('0.0')
@@ -353,9 +365,9 @@ class ProgressBar(ProgressRecorder):
 		self._state = value
 
 	def update(self, current: Optional[int] = None, description: Optional[str] = None, total: Optional[int] = None):
-		'''
+		"""
 		Update one or more params
-		'''
+		"""
 		if current is None and total is None and description is None:
 			raise ValueError('ProgressBar.update: no values set')
 
@@ -370,25 +382,24 @@ class ProgressBar(ProgressRecorder):
 		self.refresh_task_state()
 
 	def set_progress(self, current: int, total: int = 100, description: str = ""):
-		'''
+		"""
 		Overrides default functionality to save meta locally in this class
-		'''
+		"""
 		self.update(current=current, description=description, total=total)
 
 		# Return the same thing as our parent
 		return self.state, self.meta
 
 	def get_task(self) -> Task | None:
-		'''
+		"""
 		Get the task object
-		'''
+		"""
 		return self.task
 
 	def refresh_task_state(self) -> None:
-		'''
+		"""
 		Update the task state based on our instance attributes
-		'''
-
+		"""
 		# Update to running if we 1) haven't yet and 2) have done anything at all.
 		# -- otherwise, trust the end user to update states appropriately
 		if not ProgressStates.has_started(self.state) and (self._current > 0 or self._description):
@@ -405,13 +416,14 @@ class ProgressBar(ProgressRecorder):
 		)
 
 class ChildProgressBar():
-	'''
+	"""
 	This class can be passed to child tasks in order to update the overall progress bar within the context of a subtask.
 
 	In other words, it can provide progress updates without changing the total number of tasks.
 
 	TODO: Unfinished
-	'''
+	"""
+
 	_parent : ProgressBar
 	_total : int = 0
 	_current : int = 0

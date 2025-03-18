@@ -1,32 +1,36 @@
 """
-	The Hook class is responsible for storing data about hooks that we've registered.
+The Hook class is responsible for storing data about hooks that we've registered.
 
-	Metadata:
+Metadata:
 
-		File: hooks.py
-		Project: Django Foundry
-		Created Date: 02 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: hooks.py
+Project: Django Foundry
+Created Date: 02 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from typing import Any, Callable, Tuple
+
 from djangofoundry.helpers.hooks.meta import DEFAULT_NAMESPACE, DEFAULT_PRIORITY
+
 
 class Hook:
 	"""
 	A container for data about a registered hook
 	"""
+
 	namespace : str
 	name : str
 	action : Callable
@@ -63,6 +67,7 @@ class Hook:
 				Lower priorities will execute first.
 			max_executions (int):
 				The maximum number of times this hook can be run. Defaults to -1 (no maximum)
+
 		"""
 		self.namespace = namespace
 		self.name = name
@@ -87,6 +92,7 @@ class Hook:
 			Traceback (most recent call last):
 			...
 			MaxExecutionsError: Hook application.test has already been run 1 times.
+
 		"""
 		return self.executions < self.max_executions > -1
 
@@ -102,6 +108,7 @@ class Hook:
 
 		Returns:
 			(bool, Any): Returns a boolean to indicate whether the action run, and the return value of the action (or None)
+
 		"""
 		# Check if we're allowed to run
 		if self.can_run() is False:
@@ -126,6 +133,7 @@ class Hook:
 
 		Returns:
 			Any: Hooks may define their own return values
+
 		"""
 		# Increase the executions (perhaps beyond the max)
 		self._executions += 1

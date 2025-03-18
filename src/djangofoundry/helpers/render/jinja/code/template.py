@@ -1,25 +1,27 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: code.py
-		Project: Django Foundry
-		Created Date: 09 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: code.py
+Project: Django Foundry
+Created Date: 09 Apr 2023
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Thu Apr 13 2023
-		Modified By: Jess Mann
+Last Modified: Thu Apr 13 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2023 Jess Mann
+Copyright (c) 2023 Jess Mann
 """
 from __future__ import annotations
+
 import logging
 import re
+
 from djangofoundry.helpers.render.jinja.template import TemplateHelper
 
 # Set up logging for this module
@@ -31,6 +33,7 @@ class CodeHelper(TemplateHelper):
 
 	Attributes:
 		env (Environment): The jinja environment.
+
 	"""
 
 	def suggest_class_name(self, input_str: str) -> str:
@@ -42,8 +45,8 @@ class CodeHelper(TemplateHelper):
 
 		Returns:
 			str: The suggested class name
-		"""
 
+		"""
 		# Remove any non-alpha and title case
 		cleaned_name = re.sub(r'[^a-zA-Z]+', ' ', input_str).title().replace(' ', '')
 

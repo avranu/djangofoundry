@@ -1,23 +1,24 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: logging.py
-		Project: Django Foundry
-		Created Date: 19 Oct 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: logging.py
+Project: Django Foundry
+Created Date: 19 Oct 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Fri Dec 02 2022
-		Modified By: Jess Mann
+Last Modified: Fri Dec 02 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 from __future__ import annotations
+
 import logging
 
 # Set up logging for this module. __name__ includes the namespace (e.g. dashboard.models.cases).

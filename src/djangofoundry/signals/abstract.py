@@ -1,24 +1,25 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: abstract.py
-		Project: Django Foundry
-		Created Date: 02 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: abstract.py
+Project: Django Foundry
+Created Date: 02 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sat Dec 03 2022
-		Modified By: Jess Mann
+Last Modified: Sat Dec 03 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
+
 from django import dispatch
 
 
@@ -38,7 +39,6 @@ class Signal(dispatch.Signal):
 		won't be called if an error is raised.
 
 		Arguments:
-
 			sender
 				The sender of the signal. Either a specific object or None.
 
@@ -46,5 +46,6 @@ class Signal(dispatch.Signal):
 				Named arguments which will be passed to receivers.
 
 		Return a list of tuple pairs [(receiver, response), ... ].
+
 		"""
 		return self.send(sender.__class__, **named)

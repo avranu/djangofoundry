@@ -1,26 +1,27 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: exceptions/app.py
-		Project: Django Foundry
-		Created Date: 17 Dec 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: exceptions/app.py
+Project: Django Foundry
+Created Date: 17 Dec 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Sun Apr 16 2023
-		Modified By: Jess Mann
+Last Modified: Sun Apr 16 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 class AppException(Exception):
 	"""
 	Internal exception used in our application.
 	"""
+
 	_custom_message : str | None = None
 
 	@property

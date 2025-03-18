@@ -1,7 +1,7 @@
-import os
-import ast
 import argparse
+import ast
 import logging
+import os
 from typing import Any, Union
 
 # Configure logger to print to output
@@ -15,6 +15,7 @@ class PythonClassParser:
 	This class will parse all Python files in a directory and output a summary of all classes found in those files, which can be used
 	to generate documentation for the project, or to pass to other tools (like LLMs).
 	"""
+
 	def __init__(self, directory: str, output_file: str, ignored_paths: list[str], recursive: bool) -> None:
 		logger.debug(f"Initializing PythonClassParser: {directory} : {output_file}")
 		self.directory: str = directory
@@ -89,7 +90,6 @@ class PythonClassParser:
 		"""
 		Shorten a return type to a more readable format (and one which uses fewer tokens, when passed to an LLM)
 		"""
-
 		# Turn 'Union[None, str]' into 'str'
 		if return_type.startswith('Union[None'):
 			return_type = return_type[return_type.rfind(',') + 2:-1]

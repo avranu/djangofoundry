@@ -1,46 +1,51 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: queue.py
-		Project: Django Foundry
-		Created Date: 09 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: queue.py
+Project: Django Foundry
+Created Date: 09 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Thu Apr 13 2023
-		Modified By: Jess Mann
+Last Modified: Thu Apr 13 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 from __future__ import annotations
-from typing import Any, Callable, Optional
+
 import queue
 from collections import deque
-from typing_extensions import Self
+from typing import Any, Callable, Optional
+
 from psqlextra.query import ConflictAction
+from typing_extensions import Self
+
 # Django Imports
 # Lib Imports
 from djangofoundry.helpers.queue import signals
 from djangofoundry.models import Model
 from djangofoundry.models.choices import TextChoices
+
 # App Imports
 
 class Callbacks(TextChoices):
 	"""
 	Constants for the callback points on a queue
 	"""
+
 	SAVE = 'save'
 	CLEAR = 'clear'
 	APPEND = 'append'
 
 class Queue(queue.Queue):
-	'''
+	"""
 	This class handles queueing models for a bulk save. When the queue reaches its limit, it will automatically save the queued models and empty the queue
 	TODO: Doc is out of date. Will be used for a queue manager in the future.
 
@@ -62,7 +67,8 @@ class Queue(queue.Queue):
 		queue.save(Case)
 		# The above call clears the queue after save
 		queue.size(Case) # --> 0
-	'''
+
+	"""
 
 	# The point at which we automatically trigger save()
 	limit: int = 100
@@ -109,6 +115,7 @@ class Queue(queue.Queue):
 
 		Notes:
 			Turning deferred saving off using this method does NOT trigger the queue to be processed.
+
 		"""
 		self._save_deferred = value
 
@@ -148,6 +155,7 @@ class Queue(queue.Queue):
 
 		Raises:
 			TypeError: If no unique key is provided in the class definition or as a param of init.
+
 		"""
 		if callbacks is None:
 			callbacks = {}
@@ -188,19 +196,20 @@ class Queue(queue.Queue):
 			self.callbacks.update(callbacks)
 
 	def __enter__(self) -> Self:
-		'''
+		"""
 		Allow this to be used in a with block.
-		'''
+		"""
 		# Return this instance, so the with statement can set "AS" variables.
 		return self
 
 	def __exit__(self, exit_type, value, traceback):
-		'''
+		"""
 		When exiting a with block, automatically save all remaining objects in the queue.
 
 		Notes:
 			This FORCES a save, even if saving is deferred.
-		'''
+
+		"""
 		# Force the save, but don't change the deferral state.
 		self.save(force_save=True)
 
@@ -217,6 +226,7 @@ class Queue(queue.Queue):
 
 		Raises:
 			ValueError: If the callback_name is not set (i.e. there is a typo)
+
 		"""
 		# No callback by this name.
 		if callback_name not in self.callbacks:
@@ -251,6 +261,7 @@ class Queue(queue.Queue):
 
 		Notes:
 			Turning deferred saving off using this method DOES trigger the queue to be processed.
+
 		"""
 		self.save_deferred = value
 
@@ -258,14 +269,15 @@ class Queue(queue.Queue):
 			self.allow_save()
 
 	def clear(self) -> int:
-		'''
+		"""
 		Empty the queue.
 
 		NOTE: This does not save the items in the queue. It simply removes them.
 
 		Returns:
 			int: The number of items removed from the queue
-		'''
+
+		"""
 		# Save the number in the queue before we empty it
 		count = self.size()
 
@@ -281,7 +293,7 @@ class Queue(queue.Queue):
 		return count
 
 	def size(self) -> int:
-		'''
+		"""
 		Return the size of a given model's queue.
 
 		Convenience method for queue.qsize(), so it is more obvious what we're doing.
@@ -291,12 +303,13 @@ class Queue(queue.Queue):
 
 		Note:
 			From the queue doc: qsize() > 0 doesn’t guarantee that a subsequent get() will not block, nor will qsize() < limit guarantee that put() will not block.
-		'''
+
+		"""
 		# Use get instead of an index so we return 0 when a queue doesn't exist yet
 		return self.qsize()
 
 	def save(self, *, force_save : bool = False) -> int:
-		'''
+		"""
 		Save all data in the given model queue.
 
 		NOTE: This empties the queue after saving.
@@ -310,7 +323,8 @@ class Queue(queue.Queue):
 
 		Returns:
 			The number of items saved (and removed) from the queue
-		'''
+
+		"""
 		# If saving is deferred, then we have nothing to do right now.
 		if self.save_deferred is True and force_save is not True:
 			return 0
@@ -324,7 +338,7 @@ class Queue(queue.Queue):
 
 		# Use Postgres' "on conflict" clause to attempt an INSERT, and fall back to an UPDATE if we have a collision.
 		# Collisions are caused by duplicating "case_id", which has a unique constraint in the db.
-		results = self.model.postgres.on_conflict(self.unique_key, ConflictAction.UPDATE).bulk_insert(values)
+		results = self.model.objects.on_conflict(self.unique_key, ConflictAction.UPDATE).bulk_insert(values)
 
 		# TODO: [AUTO-368] Validation (all were saved)
 
@@ -361,6 +375,7 @@ class Queue(queue.Queue):
 			>>> queue.append(Person())
 			0
 			>>> queue.defer_save
+
 		"""
 		# Check if a save is warranted.
 		if self.size() > self.limit > -1:
@@ -372,7 +387,7 @@ class Queue(queue.Queue):
 
 
 	def append(self, model: Model, defer_save : bool = False) -> int:
-		'''
+		"""
 		Add a model to the queue, and if limit is reached, save the queue and clear it.
 
 		Args:
@@ -384,7 +399,8 @@ class Queue(queue.Queue):
 
 		Returns:
 			int: The new queue size.
-		'''
+
+		"""
 		# If the queue's model is not set, determine it from this first append
 		if self.model is None:
 			self.model = model

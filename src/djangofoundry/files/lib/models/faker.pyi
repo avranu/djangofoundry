@@ -1,7 +1,7 @@
 
-from decimal import Decimal
-from typing import Any, Optional, Union, List
 import datetime
+from decimal import Decimal
+from typing import Any, List, Optional, Union
 
 class Faker:
     def __init__(self, locale: str = "en_US", *args, **kwargs): ...

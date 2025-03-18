@@ -1,47 +1,66 @@
 """
-	Metadata:
+Metadata:
 
-		File: queryset.py
-		Project: Django Foundry
-		Created Date: 18 Aug 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: queryset.py
+Project: Django Foundry
+Created Date: 18 Aug 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Tue Apr 11 2023
-		Modified By: Jess Mann
+Last Modified: Tue Apr 11 2023
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 
 """
 # Generic imports
 from __future__ import annotations
+
+import logging
+import operator
+from datetime import datetime
 from decimal import Decimal
 from functools import reduce
-import operator
-from typing import TYPE_CHECKING, Tuple, Union, Callable, Any, Optional
-from datetime import datetime
 from math import sqrt
 from time import perf_counter_ns
-import logging
-from typing_extensions import Self
-from statsmodels.tsa.seasonal import seasonal_decompose
-from statsmodels.tsa.stattools import grangercausalitytests
-from scipy import stats
-import pandas as pd
-import numpy as np
-# Django Imports
-from django.db.models import (
-	Sum, Count, Q, Avg, Min, Max, StdDev, ExpressionWrapper, F,
-	FloatField, IntegerField, DecimalField, BigIntegerField, PositiveIntegerField,
-	PositiveSmallIntegerField, SmallIntegerField, DurationField, PositiveBigIntegerField
-)
-from django.db.models.query import RawQuerySet
+from typing import TYPE_CHECKING, Any, Callable, Optional, Tuple, Union
+
 # Django extensions
 import auto_prefetch
+import numpy as np
+import pandas as pd
+
+# Django Imports
+from django.db.models import (
+	Avg,
+	BigIntegerField,
+	Count,
+	DecimalField,
+	DurationField,
+	ExpressionWrapper,
+	F,
+	FloatField,
+	IntegerField,
+	Max,
+	Min,
+	PositiveBigIntegerField,
+	PositiveIntegerField,
+	PositiveSmallIntegerField,
+	Q,
+	SmallIntegerField,
+	StdDev,
+	Sum,
+)
+from django.db.models.query import RawQuerySet
+from scipy import stats
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import grangercausalitytests
+from typing_extensions import Self
+
 # App Imports
 
 if TYPE_CHECKING:
@@ -55,9 +74,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 class QuerySet(auto_prefetch.QuerySet):
-	'''
+	"""
 	A custom queryset. All models below will use this for interacting with results from the db.
-	'''
+	"""
+
 	# A map of registered filters. This allows us to whitelist filters and then call them by their (string) name. Used primarily in Celery.
 	filters: dict[str, Callable] = {}
 
@@ -77,6 +97,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			>>> qs.count()
 			>>> qs.is_evaluated()
 			True
+
 		"""
 		#return self._result_cache is not None
 		raise NotImplementedError('_result_cache does not appear to exist on django querysets anymore.')
@@ -99,6 +120,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			True
 			>>> Case.objects.field_is_numeric('case_id')
 			False
+
 		"""
 		if not hasattr(self.model, field_name):
 			raise ValueError(f"No field '{field_name}' on queryset")
@@ -120,7 +142,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return any(isinstance(attr, field) for field in numeric_fields)
 
 	def latest_value(self, property_name: str) -> Any:
-		'''
+		"""
 		Attempts to get the lastest record, and returns the requested property from it. If no record is found, returns None.
 		This bypasses an exception being thrown on no results.
 
@@ -133,7 +155,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.latest_value('amount')
 			1000
-		'''
+
+		"""
 		try:
 			result = self.latest(property_name)
 			return getattr(result, property_name, None)
@@ -143,7 +166,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			return None
 
 	def min(self, property_name: str) -> Union[float, None]:
-		'''
+		"""
 		Attempts to get the minimum value for the given property. If no record is found, returns None.
 		This bypasses an exception being thrown on no results.
 
@@ -152,7 +175,8 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			Any: The minimum value of the property, or None if no record is found
-		'''
+
+		"""
 		try:
 			return self.aggregate(Min(property_name))[f'{property_name}__min']
 
@@ -161,7 +185,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			return None
 
 	def max(self, property_name: str) -> Union[float, None]:
-		'''
+		"""
 		Attempts to get the maximum value for the given property. If no record is found, returns None.
 		This bypasses an exception being thrown on no results.
 
@@ -170,7 +194,8 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			Union[float, None]: The maximum value of the property, or None if no record is found
-		'''
+
+		"""
 		try:
 			return self.aggregate(Max(property_name))[f'{property_name}__max']
 
@@ -179,7 +204,7 @@ class QuerySet(auto_prefetch.QuerySet):
 			return None
 
 	def filter_smallest(self, property_name: str, margin: float = 0) -> Self:
-		'''
+		"""
 		Attempts to get the entry with the smallest value for the given property.
 
 		Args:
@@ -192,7 +217,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.smallest('amount')
 			<QuerySet [<Case: Case 1>]>
-		'''
+
+		"""
 		min_value = self.min(property_name)
 		if min_value is None:
 			return self.none()
@@ -201,7 +227,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return self.filter(**{property_name: min_value - margin})
 
 	def filter_largest(self, property_name: str, margin: float = 0) -> Self:
-		'''
+		"""
 		Attempts to get the entry with the largest value for the given property.
 
 		Args:
@@ -214,7 +240,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.largest('amount')
 			<QuerySet [<Case: Case 1>]>
-		'''
+
+		"""
 		max_value = self.max(property_name)
 		if max_value is None:
 			return self.none()
@@ -223,7 +250,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return self.filter(**{property_name: max_value + margin})
 
 	def has_blank(self, property_name: str, include_null: bool = True) -> Self:
-		'''
+		"""
 		Attempts to get any entries with a blank value (or optionally null) for the given property.
 
 		Args:
@@ -232,14 +259,15 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			This queryset, filtered to include only results that have a blank value (or optionally null) for the given property
-		'''
+
+		"""
 		if include_null:
 			return self.filter(**{f'{property_name}__isnull': True}) | self.filter(**{f'{property_name}__exact': ''})
 
 		return self.filter(**{f'{property_name}__exact': ''})
 
 	def have_blanks(self, include_null: bool = True, number_of_blank_fields: int = 1) -> Self:
-		'''
+		"""
 		Attempts to get any entries with a blank value (or optionally null) for any property.
 
 		Args:
@@ -248,7 +276,8 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			This queryset, filtered to include only results that have a blank value (or optionally null) for any property
-		'''
+
+		"""
 		# This is a minimum, not an exact number, so <= 0 doesn't make sense.
 		if number_of_blank_fields <= 0:
 			raise ValueError("Number of blank fields must be greater than 0")
@@ -261,7 +290,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return annotated.filter(blank_fields__gte=number_of_blank_fields)
 
 	def total(self, property_name: str) -> Union[float, int, Decimal]:
-		'''
+		"""
 		Adds up the values of a given property and returns the result
 
 		Args:
@@ -276,7 +305,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.total('amount')
 			1000
-		'''
+
+		"""
 		if not hasattr(self.model, property_name):
 			raise ValueError(f"No field '{property_name}' on queryset")
 
@@ -286,11 +316,11 @@ class QuerySet(auto_prefetch.QuerySet):
 		return self.aggregate(Sum(property_name))[f'{property_name}__sum'] or 0
 
 	def request(self, request_str: str) -> Union[Self, RawQuerySet]:
-		'''
+		"""
 		Makes a request, as a string, to be turned into a queryset
 		For example: request('open recalc missing-docs') on the Cases queryset will build a query for open recalc cases with no documents.
 		This is used primarily for Celery tasks, which require querysets to be represented as strings
-		'''
+		"""
 		# Break it into individual requests
 		arguments = request_str.split()
 
@@ -313,13 +343,13 @@ class QuerySet(auto_prefetch.QuerySet):
 		return qs
 
 	def apply_filter(self, filter_name: str) -> Union[Self, RawQuerySet]:
-		'''
+		"""
 		Builds a queryset by providing a string that refers to a filter.
 		For example: build('open') on the Cases QuerySet will build an open cases query.
 		This is used primarily for Celery tasks, which require querysets to be represented as strings
 
 		If more complicated logic is needed, subclasses can override this method and call super().apply_filter(filter) as a fallback.
-		'''
+		"""
 		# Try our whitelisted filters. These are generally registered using the @Queryset_Filter decorator.
 		if filter_name in self.filters:
 			# If it exists, run it
@@ -336,7 +366,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		raise NotImplementedError(f'Bad Queryset filter requested: {filter_name}')
 
 	def filter_by_related(self, foreign_key: str, filter_expression: Q, alias_name: Optional[str] = None) -> Self:
-		'''
+		"""
 		Filters this model based on the existence of a related model with a given property
 
 		Args:
@@ -353,7 +383,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_by_related('documents', Q(document_type='invoice'))
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
-		'''
+
+		"""
 		# Allow for default alias names
 		if alias_name is None:
 			# Guarantee unique name
@@ -378,11 +409,12 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.foreignkey_exists('assigned_to')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>, <Case: Case 3>]>
+
 		"""
 		return self.filter(**{f'{attribute_name}__isnull': False})
 
 	def summarize_x_by_average_y(self, x_field_name: str, y_field_name: str) -> dict[str, float]:
-		'''
+		"""
 		Summarizes the values of a given field. This is used to summarize the values of a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of statuses mapped to the average processing time for each status.
 
@@ -399,12 +431,13 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_x_by_average_y('status', 'processing_time')
 			{ 'open': 1.5, 'closed': 2.0 }
-		'''
+
+		"""
 		summary_data = (self.values(x_field_name).annotate(count=Avg(y_field_name)).order_by(x_field_name))
 		return {result[x_field_name]: result['count'] for result in summary_data}
 
 	def summarize_x_by_sum_y(self, x_field_name: str, y_field_name: str) -> dict[str, float]:
-		'''
+		"""
 		Summarizes the values of a given field. This is used to summarize the values of a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of statuses mapped to the total processing time for each status.
 
@@ -421,12 +454,13 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_x_by_sum_y('status', 'processing_time')
 			{ 'open': 3.0, 'closed': 2.5 }
-		'''
+
+		"""
 		summary_data = (self.values(x_field_name).annotate(count=Sum(y_field_name)).order_by(x_field_name))
 		return {result[x_field_name]: result['count'] for result in summary_data}
 
 	def summarize_x_by_high_y(self, x_field_name: str, y_field_name: str) -> dict[str, int]:
-		'''
+		"""
 		Summarizes the values of a given field. This is used to summarize the values of a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of statuses mapped to the top half processing time for each status.
 		This will always get half the dataset.
@@ -444,13 +478,14 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_x_by_high_y('status', 'processing_time')
 			{ 'open': 2, 'closed': 5 }
-		'''
+
+		"""
 		summary_data = (self.values(x_field_name).annotate(count=Count(y_field_name, filter=Q(**{f"{y_field_name}__gt": Avg(y_field_name)}))).order_by(x_field_name))
 
 		return {result[x_field_name]: result['count'] for result in summary_data}
 
 	def summarize_x_by_low_y(self, x_field_name: str, y_field_name: str) -> dict[str, int]:
-		'''
+		"""
 		Summarizes the values of a given field. This is used to summarize the values of a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of statuses mapped to a count of entries that have a lower than average processing time for each status.
 
@@ -467,13 +502,14 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_x_by_low_y('status', 'processing_time')
 			{ 'open': 1, 'closed': 3 }
-		'''
+
+		"""
 		summary_data = (self.values(x_field_name).annotate(count=Count(y_field_name, filter=Q(**{f"{y_field_name}__lt": Avg(y_field_name)}))).order_by(x_field_name))
 
 		return {result[x_field_name]: result['count'] for result in summary_data}
 
 	def anomalies_in(self, field_name: str, deviations: int = 2) -> Self:
-		'''
+		"""
 		Finds anomalies in a field. This is used to find anomalies in a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of anomalies in the processing time field.
 
@@ -490,7 +526,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.anomalies_in('processing_time')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
-		'''
+
+		"""
 		# Get the average and standard deviation of the field
 		avg = self.aggregate(Avg(field_name))[f"{field_name}__avg"]
 		std = self.aggregate(StdDev(field_name))[f"{field_name}__stddev"]
@@ -499,7 +536,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return self.filter(**{f"{field_name}__gt": avg + deviations * std})
 
 	def summarize_distribution(self, field_name: str, bins: int = 10) -> dict[int, int]:
-		'''
+		"""
 		Summarizes the distribution of a field. This is used to summarize the distribution of a field in a queryset.
 		For example, if we have a queryset of cases, we get a list of the distribution of the processing time field.
 
@@ -516,7 +553,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_distribution('processing_time', 5)
 			{ 0: 1, 1: 2, 2: 1, 3: 1, 4: 1 }
-		'''
+
+		"""
 		# Get the min and max of the field
 		min_value = self.aggregate(Min(field_name))[f"{field_name}__min"]
 		max_value = self.aggregate(Max(field_name))[f"{field_name}__max"]
@@ -527,7 +565,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		return {result["bin"]: result["count"] for result in distribution}
 
 	def summarize_x_by_y_distribution(self, x_field_name: str, y_field_name: str, bins: int = 10) -> dict[str, dict[int, int]]:
-		'''
+		"""
 		Summarizes the distribution of a field by another field. This is used to summarize the distribution of a field in a queryset by another field.
 		For example, if we have a queryset of cases, we get a list of the distribution of the processing time field by status.
 
@@ -545,7 +583,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.summarize_x_by_distribution('status', 'processing_time', 5)
 			{ 'open': { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 }, 'closed': { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 } }
-		'''
+
+		"""
 		# Get the min and max of the field
 		min_value = self.aggregate(Min(y_field_name))[f"{y_field_name}__min"]
 		max_value = self.aggregate(Max(y_field_name))[f"{y_field_name}__max"]
@@ -577,6 +616,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.count_unique('status')
 			2
+
 		"""
 		unique_count = self.aggregate(unique_count=Count(field_name, distinct=True))['unique_count']
 		return unique_count
@@ -597,6 +637,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.count_x_by_unique_y('status', 'location')
 			{ 'open': 1, 'closed': 0 }
+
 		"""
 		# Annotate entries that have a unique y_field
 		unique_qs = self.values(field_name_x, field_name_y).annotate(unique=Count(field_name_y, distinct=True))
@@ -623,6 +664,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.median('processing_time')
 			1.5
+
 		"""
 		row_count = self.count()
 		if not row_count:
@@ -652,6 +694,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_median('processing_time')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
+
 		"""
 		median = self.median(field_name)
 		if median is None:
@@ -688,6 +731,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.percentile('processing_time', 0.5)
 			1.5
+
 		"""
 		row_count = self.count()
 		if not row_count:
@@ -717,6 +761,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_percentile('processing_time', 0.5)
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
+
 		"""
 		result = self.percentile(field_name, percentile)
 		if result is None:
@@ -749,6 +794,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.mode('status')
 			'open'
+
 		"""
 		# Get the count of each value
 		value_counts = self.values(field_name).annotate(count=Count(field_name))
@@ -773,6 +819,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_mode('status')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
+
 		"""
 		mode = self.mode(field_name)
 		if mode is None:
@@ -803,6 +850,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.mean('processing_time')
 			1.5
+
 		"""
 		mean = self.aggregate(mean=Avg(field_name))['mean']
 		return mean
@@ -821,6 +869,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_mean('processing_time')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
+
 		"""
 		mean = self.mean(field_name)
 		if mean is None:
@@ -851,6 +900,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.mean_nonzero('processing_time')
 			1.5
+
 		"""
 		mean = self.exclude(**{field_name: 0}).aggregate(mean=Avg(field_name))['mean']
 		return mean
@@ -869,6 +919,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_mean_nonzero('processing_time')
 			<QuerySet [<Case: Case 1>, <Case: Case 2>]>
+
 		"""
 		mean = self.mean_nonzero(field_name)
 		if mean is None:
@@ -905,6 +956,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.variance('processing_time')
 			0.5
+
 		"""
 		# Get the mean of the field
 		mean = self.aggregate(mean=Avg(field_name))['mean']
@@ -926,6 +978,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.standard_deviation('processing_time')
 			0.7071067811865476
+
 		"""
 		# Get the variance
 		variance = self.variance(field_name)
@@ -955,6 +1008,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.covariance('processing_time', 'processing_time')
 			0.5
+
 		"""
 		# Get the mean of the fields
 		mean_x = self.aggregate(mean=Avg(field_name_x))['mean']
@@ -985,6 +1039,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.correlation('processing_time', 'processing_time')
 			1.0
+
 		"""
 		# Get the standard deviation of the fields
 		standard_deviation_x = self.standard_deviation(field_name_x)
@@ -1008,6 +1063,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.find_correlated_fields('processing_time')
 			['tasks']
+
 		"""
 		# Get the correlation of the field with every other field
 		correlations = {correlated_field_name: self.correlation(field_name, correlated_field_name) for correlated_field_name in self.model._meta.get_fields() if (field_name != correlated_field_name and self.field_is_numeric(correlated_field_name))}
@@ -1043,6 +1099,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.linear_regression('processing_time', 'processing_time')
 			(0.0, 1.0)
+
 		"""
 		# Get the correlation
 		correlation = self.correlation(field_name_x, field_name_y)
@@ -1082,6 +1139,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.linear_regression_prediction('processing_time', 'processing_time', 1.0)
 			1.0
+
 		"""
 		# Get the linear regression
 		slope, intercept = self.linear_regression(field_name_x, field_name_y)
@@ -1107,6 +1165,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.linear_regression_residuals('processing_time', 'processing_time')
 			[0.0, 0.0, 0.0, 0.0, 0.0]
+
 		"""
 		# Get the linear regression
 		slope, intercept = self.linear_regression(field_name_x, field_name_y)
@@ -1133,6 +1192,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.linear_regression_deviation('processing_time', 'processing_time')
 			0.0
+
 		"""
 		# Get the linear regression residuals
 		residuals = self.linear_regression_residuals(field_name_x, field_name_y)
@@ -1154,6 +1214,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.random_sample(5)
 			[<Case: Case object (1)>, <Case: Case object (2)>, <Case: Case object (3)>, <Case: Case object (4)>, <Case: Case object (5)>]
+
 		"""
 		# Get the random sample
 		entries = self.order_by('?')[:sample_size]
@@ -1173,6 +1234,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.filter_by_search('search term')
 			[<Case: Case object (1)>, <Case: Case object (2)>, <Case: Case object (3)>, <Case: Case object (4)>, <Case: Case object (5)>]
+
 		"""
 		# Get the entries that match the search term
 		if fields is None:
@@ -1198,6 +1260,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.annotate_duration('start_time', 'end_time', 'duration')
 			[<Case: Case object (1)>, <Case: Case object (2)>, <Case: Case object (3)>, <Case: Case object (4)>, <Case: Case object (5)>]
+
 		"""
 		# Annotate the entries with the duration between two fields
 		entries = self.annotate(**{alias: F(end_field) - F(start_field)})
@@ -1218,6 +1281,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.date_range(datetime(2020, 1, 1), datetime(2020, 1, 31), 'date')
 			[<Case: Case object (1)>, <Case: Case object (2)>, <Case: Case object (3)>, <Case: Case object (4)>, <Case: Case object (5)>]
+
 		"""
 		# Get the entries within a date range
 		entries = self.filter(**{f"{format(date_field)}__range": [start_date, end_date]})
@@ -1237,6 +1301,7 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			list[float]: The rolling mean of the field
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).rolling(window=window).mean().tolist()
@@ -1251,6 +1316,7 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			list[float]: The exponential smoothing of the field
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).ewm(alpha=alpha).mean().tolist()
@@ -1269,6 +1335,7 @@ class QuerySet(auto_prefetch.QuerySet):
 
 		Returns:
 			Tuple[list[float], list[float], list[float]]: The trend, seasonal, and residual components
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		decomposition = seasonal_decompose(data, period=freq)
@@ -1296,6 +1363,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.autocorrelation('field', 1)
 			0.5
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).autocorr(lag=lag)
@@ -1320,6 +1388,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.partial_autocorrelation('field', 1)
 			0.5
+
 		"""
 		from statsmodels.tsa.stattools import pacf
 		data = self.values_list(field_name, flat=True)
@@ -1347,8 +1416,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.granger_causality('field_x', 'field_y', 1)
 			[0.5]
-		"""
 
+		"""
 		data_x = self.values_list(field_name_x, flat=True)
 		data_y = self.values_list(field_name_y, flat=True)
 		data = pd.DataFrame({'x': data_x, 'y': data_y})
@@ -1370,6 +1439,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.cumulative_sum('field')
 			[1, 3, 6]
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		return pd.Series(data).cumsum().tolist()
@@ -1391,6 +1461,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.z_score('field')
 			[1.1, 3.5, 6.0]
+
 		"""
 		data = self.values_list(field_name, flat=True)
 		return stats.zscore(data).tolist()
@@ -1411,6 +1482,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.iqr_outliers('field')
 			<QuerySet [<Case: Case object (1)>, <Case: Case object (2)>]>
+
 		"""
 		data = list(self.values_list(field_name, flat=True))
 		q1 = np.percentile(data, 25)
@@ -1438,8 +1510,8 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.detect_anomalies('field')
 			<QuerySet [<Case: Case object (1)>, <Case: Case object (2)>]>
-		"""
 
+		"""
 		if method == 'z_score':
 			return self.filter(self.get_zscore_Q(field_name, z_threshold))
 
@@ -1480,6 +1552,7 @@ class QuerySet(auto_prefetch.QuerySet):
 		Example:
 			>>> Case.objects.detect_anomalies()
 			<QuerySet [<Case: Case object (1)>, <Case: Case object (2)>]>
+
 		"""
 		# Get all fields that are numeric
 		numeric_fields = [field.name for field in self.model._meta.get_fields() if self.field_is_numeric(field)]

@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from typing import Any
+
 import django.db.models
 import djangofoundry.models
+
 
 class TextChoices(djangofoundry.models.TextChoices):
     def __eq__(self, other: Any) -> bool:

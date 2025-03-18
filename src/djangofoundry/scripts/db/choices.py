@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from enum import Enum
+
 
 class Actions(Enum):
 	"""
@@ -15,6 +17,7 @@ class Actions(Enum):
 		stop:
 			stop the DB (if it is running)
 	"""
+
 	START = 'start'
 	RESTART = 'restart'
 	STATUS = 'status'

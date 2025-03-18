@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 
 # Django imports
 from django.urls import include, re_path

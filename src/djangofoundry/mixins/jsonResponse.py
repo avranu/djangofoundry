@@ -1,24 +1,25 @@
 """
 
-	Metadata:
+Metadata:
 
-		File: mixins.py
-		Project: Django Foundry
-		Created Date: 15 Sep 2022
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+File: mixins.py
+Project: Django Foundry
+Created Date: 15 Sep 2022
+Author: Jess Mann
+Email: jess.a.mann@gmail.com
 
-		-----
+-----
 
-		Last Modified: Fri Dec 02 2022
-		Modified By: Jess Mann
+Last Modified: Fri Dec 02 2022
+Modified By: Jess Mann
 
-		-----
+-----
 
-		Copyright (c) 2022 Jess Mann
+Copyright (c) 2022 Jess Mann
 """
 # Generic imports
 import logging
+
 # Django imports
 from django.http import JsonResponse
 
@@ -34,6 +35,7 @@ class JSONResponseMixin:
 	"""
 	Mixin for a controller that render JSON responses.
 	"""
+
 	def render_to_json_response(self, context, **kwargs):
 		return JsonResponse(self.get_data(context), **kwargs)
 
