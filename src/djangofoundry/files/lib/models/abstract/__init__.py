@@ -1,2 +1,2 @@
-from {project_name}.lib.models.abstract.queryset import LibQuerySet, LibManager, MockQuerySet, LibQueue
-from {project_name}.lib.models.abstract.model import LibModel
+from lib.models.abstract.queryset import LibQuerySet, LibManager, LibQueue
+from lib.models.abstract.model import LibModel

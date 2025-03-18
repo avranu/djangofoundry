@@ -1,1 +1,1 @@
-from {project_name}.lib.exceptions.exceptions import AppError
+from lib.exceptions.exceptions import AppError

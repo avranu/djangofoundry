@@ -7,7 +7,7 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 
 # App Imports
-from {project_name}.dashboard.controllers import home
+from dashboard.controllers import home
 
 app_name = "dashboard"
 

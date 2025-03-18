@@ -15,7 +15,7 @@ admin.autodiscover()
 urlpatterns = [
     # path('', include(tf_urls)),
     re_path("admin/", admin.site.urls),
-    re_path("dashboard/", include("{project_name}.dashboard.urls")),
+    re_path("dashboard/", include("dashboard.urls")),
     re_path("__debug__/", include("debug_toolbar.urls")),
     re_path("api-auth/", include("rest_framework.urls")),
     re_path(r"login/?", LoginView.as_view(), name="login"),

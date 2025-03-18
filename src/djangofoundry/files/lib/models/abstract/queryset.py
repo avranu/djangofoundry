@@ -16,10 +16,10 @@ from djangofoundry.helpers import queue
 
 
 # App imports
-from {project_name}.lib.models.faker import fake
+from lib.models.faker import fake
 
 if TYPE_CHECKING:
-    from {project_name}.lib.models.abstract.model import LibModel
+    from lib.models.abstract.model import LibModel
 
 _LibModel = TypeVar("_LibModel", bound="LibModel", default="LibModel")
 _LibQuerySet = TypeVar("_LibQuerySet", bound='foundry.QuerySet', default='foundry.QuerySet')
@@ -30,7 +30,7 @@ class LibQueue(queue.Queue, Generic[_LibModel], ABC):
 class LibQuerySet(foundry.QuerySet, Generic[_LibModel]):
     pass
 
-class LibManager(foundry.PostgresManager, Generic[_LibModel, _LibQuerySet]):
+class LibManager(foundry.Manager, Generic[_LibModel, _LibQuerySet]):
 
     @singledispatchmethod
     def resolve(self, instance_or_id: Any) -> _LibModel:

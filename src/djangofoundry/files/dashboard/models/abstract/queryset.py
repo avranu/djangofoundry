@@ -9,10 +9,10 @@ from typing_extensions import TypeVar
 
 
 # App imports
-from {project_name}.lib import models
+from lib import models
 
 if TYPE_CHECKING:
-    from {project_name}.dashboard.models.abstract.model import DashboardModel
+    from dashboard.models.abstract.model import DashboardModel
 
 _DashboardModel = TypeVar("_DashboardModel", bound="DashboardModel", default="DashboardModel")
 _DashboardQuerySet = TypeVar("_DashboardQuerySet", bound='DashboardQuerySet', default='DashboardQuerySet')

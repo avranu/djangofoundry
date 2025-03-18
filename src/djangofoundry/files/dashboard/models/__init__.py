@@ -1,3 +1,3 @@
-from {project_name}.dashboard.models.abstract import (
+from dashboard.models.abstract import (
     DashboardModel, DashboardQueue, DashboardManager, DashboardQuerySet
 )

@@ -206,15 +206,50 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
         Install project dependencies using uv.
         """
         logger.info("Installing Django and project dependencies...")
+
+        packages = [
+            "colorlog",
+            "dateparser",
+            "Django",
+            "djangofoundry",
+            "django-auto-prefetch",
+            "django-cors-headers",
+            "django-cprofile-middleware",
+            "django-dirtyfields",
+            "django-picklefield",
+            "django-extensions",
+            "django-filter",
+            "django-lifecycle",
+            "django-pandas",
+            "django-postgres-extra",
+            "djangorestframework",
+            "faker",
+            "httpx",
+            "humanize",
+            "jinja2",
+            "multipledispatch",
+            "openai",
+            "orjson",
+            "psutil",
+            "postgres",
+            "pydantic",
+            "pydantic-settings",
+            "python-dotenv",
+            "requests",
+            "rich",
+            "statsmodels",
+            "typing-extensions",
+        ]
         
         # Core dependencies
-        self.run_command(["uv", "add", "django", "httpx", "pydantic", "typing-extensions", "djangofoundry"], cwd=self.directory)
+        self.run_command(["uv", "add"] + packages, cwd=self.directory)
         
         # Development dependencies
         dev_tools = [
             "ruff", "pyright", "mypy", "pre-commit",
             "bandit", "coverage", "hypothesis", 
-            "pydoctor", "pytest", "pytest-cov", "flake8"
+            "pydoctor", "pytest", "pytest-cov", "flake8",
+            "model-bakery",
         ]
         self.run_command(["uv", "add", "--dev"] + dev_tools, cwd=self.directory)
         self.run_command(["uv", "sync", "--all-groups"], cwd=self.directory)
@@ -267,11 +302,13 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
         os.remove(os.path.join(self.project_src_dir, self.project_name, "urls.py"))
         shutil.copy2(FILES_PATH / "urls.py", os.path.join(self.project_src_dir, self.project_name, "urls.py"))
 
-        # Replace {project_name} with the project name in all files
+        # Replace {project_name} with the project name in all *.py and *.json files
         self.run_command([
-            "find", self.project_src_dir, "-type", "f", "-name", "*.py", 
+            "find", self.project_src_dir, "-type", "f",
+            "(", "-name", "*.py", "-o", "-name", "*.json", ")",
             "-exec", "sed", "-i", f"s/{{project_name}}/{self.project_name}/g", "{}", "+"
         ])
+
         
         logger.info("✅ Django project setup completed")
 
