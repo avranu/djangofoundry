@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 # Django imports
 from django.urls import include, re_path
+from django.views.generic import RedirectView
 
 # 3rd Party imports
 # from two_factor.urls import urlpatterns as tf_urls
@@ -20,4 +21,5 @@ urlpatterns = [
     re_path("api-auth/", include("rest_framework.urls")),
     re_path(r"login/?", LoginView.as_view(), name="login"),
     re_path(r"logout/?", LogoutView.as_view(), name="logout"),
+    re_path(r"^/?$", RedirectView.as_view(url='/dashboard/', permanent=False), name='redirect_dashboard'),
 ]

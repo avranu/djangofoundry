@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -175,17 +176,17 @@ DJANGO_SETTINGS_MODULE="{self.project_name}.settings"
         foundry_pyproject = FILES_PATH / "pyproject.toml"
         with open(project_pyproject, "a") as project_file:
             with open(foundry_pyproject, "r") as foundry_file:
-                project_file.write(foundry_file.read())
+                for line in foundry_file:
+                    project_file.write(re.sub("{project_name}", self.project_name, line))
         
         # Copy package.json from files/ to project root
         foundry_package_json = FILES_PATH / "package.json"
         package_json = Path(self.directory) / "package.json"
         shutil.copy2(foundry_package_json, package_json)
 
-        # Use sed to replace {package_name} with the project name in both files
+        # Use sed to replace {package_name} with the project name in package.json
         self.run_command([
-            "sed", "-i", f"s/{{package_name}}/{self.project_name}/g",
-            str(project_pyproject), str(package_json)
+            "sed", "-i", f"s/{{package_name}}/{self.project_name}/g", str(package_json)
         ])
 
         # Add .vscode/settings.json and .hypothesis to .gitignore
