@@ -26,10 +26,16 @@ from __future__ import annotations
 # Django imports
 from django.db import models
 from django.db.models import Func
-import picklefield.fields
 
 # 3rd Party imports
 from psqlextra import fields
+
+# Optional imports
+try:
+    import picklefield.fields
+    PICKLEFIELD_AVAILABLE = True
+except ImportError:
+    PICKLEFIELD_AVAILABLE = False
 
 
 class HStoreField(fields.HStoreField):
@@ -69,7 +75,18 @@ class JsonFloatValues(Func):
         super().__init__(expression, output_field=models.FloatField(), **extra)
 
 
-class PickledObjectField(picklefield.fields.PickledObjectField):
+class PickledObjectField(models.Field):
     """
     A PickledObjectField that uses the picklefield library.
+    
+    Requires picklefield to be installed.
     """
+    
+    def __new__(cls, *args, **kwargs):
+        if not PICKLEFIELD_AVAILABLE:
+            raise ImportError(
+                "picklefield is required to use PickledObjectField. "
+                "Install it with: pip install django-picklefield"
+            )
+        # If picklefield is available, return an instance of the actual PickledObjectField
+        return picklefield.fields.PickledObjectField(*args, **kwargs)
