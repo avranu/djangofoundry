@@ -90,12 +90,12 @@ Contributions to DjangoFoundry are always welcome. If you find a bug or have a s
 The unit tests work in my environment, but haven't been adapted to work without django. This will be done when I have a moment. 
 
 ## TODO
-* Script to bootstrap django/angular project with a single command. 
+* Script to bootstrap django project with a single command. 
 * Unit tests should work independent of django env
 * Expand app startup script to check for common env problems
 * requirements.txt and other setup
 * Opinionated dependencies fail gracefully
-* Script to create new controller/url/angular components with a single command
+* Script to create new controller/url/frontend components with a single command
 * Standard pages (memory management, etc)
 * Standard way to tie in jinja generated code into admin ui
 

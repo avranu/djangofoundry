@@ -78,9 +78,9 @@ class JsonFloatValues(Func):
 
 class PickledObjectField(models.Field):
     """
-    A PickledObjectField that uses the picklefield library.
+    a5hg  A PickledObjectField that uses the picklefield library.
 
-    Requires picklefield to be installed.
+      Requires picklefield to be installed.
     """
 
     def __new__(cls, *args, **kwargs):

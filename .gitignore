@@ -13,7 +13,7 @@ __pycache__/
 db.sqlite3
 #migrations/
 
-# Angular
+# Javascript
 node_modules/
 dist/
 *.js.map

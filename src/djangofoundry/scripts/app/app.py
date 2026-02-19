@@ -300,7 +300,7 @@ class App:
             # Modify the existing package.json file to include our params
             data["name"] = self.project_name
             data["version"] = "1.0.0"
-            data["description"] = f"{self.project_name} - an Angular-Django project"
+            data["description"] = f"{self.project_name} - a Django project"
             data["main"] = "index.js"
             data["scripts"] = {"test": 'echo "Error: no test specified" && exit 1'}
             data["author"] = getpass.getuser()
@@ -320,28 +320,6 @@ class App:
             os.chdir(self.directory)  # Switch back to the original directory
 
         return f"Frontend setup completed for {self.project_name}"
-
-    def angular_setup(self) -> str:
-        """
-        Setup the Angular project and app with given names.
-
-        Returns:
-                A string indicating the status of the setup.
-        """
-        self.setup_frontend()
-
-        try:
-            os.chdir(self.frontend_dir)
-
-            # TODO 3 sparate npm commands can likely be consolidated into 2 or 1.
-            self.run_subprocess(["npm", "install"])
-            self.run_subprocess(["npm", "install", "@angular/cli"])
-            self.run_subprocess(["ng", "new", self.project_name, "--skip-git", "--skip-install"])
-        finally:
-            # Switch back to the original directory
-            os.chdir(self.directory)
-
-        return f"Angular setup completed for {self.project_name}"
 
     def append_django_apps(self, app_name: str) -> bool:
         """
@@ -620,7 +598,7 @@ class App:
 
     def setup(self) -> None:
         """
-        Setup both Django and Angular projects and apps with given names.
+        Setup Django project and apps with given names.
 
         Returns:
                 None
@@ -888,7 +866,7 @@ class App:
 
     def create_new_page(self, page_name: str) -> None:
         """
-        Create a new page in Django and Angular.
+        Create a new page in Django and the frontend.
 
         Args:
                 page_name (str): The name of the page to create.
@@ -897,16 +875,16 @@ class App:
                 None
         """
         try:
-            self.create_angular_component(page_name)
+            self.create_frontend_component(page_name)
             self.setup_routing(page_name)
             self.create_django_controller(page_name)
-            logging.info(f"Successfully created new page '{page_name}' in Django and Angular.")
+            logging.info(f"Successfully created new page '{page_name}' in Django and the frontend.")
         except Exception as new_page_exception:
             logging.error(f"Failed to create new page '{page_name}': {new_page_exception}")
 
-    def create_angular_component(self, page_name: str) -> None:
+    def create_frontend_component(self, page_name: str) -> None:
         """
-        Create a new Angular component.
+        Create a new frontend component.
 
         Args:
                 page_name (str): The name of the page to create.
@@ -915,14 +893,16 @@ class App:
                 None
         """
         try:
-            subprocess.run(["ng", "generate", "component", page_name], check=True)
+            # TODO
+            # subprocess.run(["ng", "generate", "component", page_name], check=True)
+            pass
         except subprocess.CalledProcessError as process_e:
-            logging.error(f"Failed to create Angular component '{page_name}': {process_e}")
+            logging.error(f"Failed to create frontend component '{page_name}': {process_e}")
             raise
 
     def setup_routing(self, page_name: str) -> None:
         """
-        Set up routing for the new Angular component.
+        Set up routing for the new frontend component.
 
         Args:
                 page_name (str): The name of the page to create.
@@ -930,30 +910,7 @@ class App:
         Returns:
                 None
         """
-        routing_file = "src/app/app-routing.module.ts"
-        try:
-            with open(routing_file, encoding="utf-8") as file:
-                lines = file.readlines()
-
-            # Add import statement for the new component
-            import_statement = (
-                f"import {{ {page_name.capitalize()}Component }} from './{page_name}/{page_name}.component';\n"
-            )
-            lines.insert(-1, import_statement)
-
-            # Add new route for the new component
-            new_route = f"  {{ path: '{page_name}', component: {page_name.capitalize()}Component }},\n"
-            for index, line in enumerate(lines):
-                if "routes: Routes" in line:
-                    lines.insert(index + 1, new_route)
-                    break
-
-            with open(routing_file, "w") as file:
-                file.writelines(lines)
-
-        except FileNotFoundError as fnf:
-            logging.error(f"Failed to set up routing for '{page_name}': {fnf}")
-            raise
+        # TODO
 
     def create_django_controller(self, page_name: str) -> None:
         """

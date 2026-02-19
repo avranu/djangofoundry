@@ -20,7 +20,7 @@
 
 """
 
-from djangofoundry.models.fields.boolean import BooleanField
+# from djangofoundry.models.fields.boolean import BooleanField
 from djangofoundry.models.fields.number import IntegerField, PositiveIntegerField, BigIntegerField, DecimalField, FloatField, CurrencyField
 from djangofoundry.models.fields.date import DateTimeField, DateField, InsertedNowField, UpdatedNowField, DateGroupField
 from djangofoundry.models.fields.char import CharField, OneCharField, RowIdField, TextField, GuidField

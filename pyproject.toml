@@ -1,6 +1,6 @@
 [project]
 version = "0.1.0"
-name = "django-foundry"
+name = "djangofoundry"
 authors = [{ name = "Jess Mann", email = "jess@jmann.me" }]
 description = "A collection of classes built on Django to make it easier to build web applications."
 readme = "README.md"
@@ -73,6 +73,8 @@ ignore = [
   "node_modules",
   "settings",
   "migrations",
+  "__pycache__",
+  "__init__.py",  # TODO probably better to disable specific rules for these (like unused imports). But for now...
 ]
 
 # Add files or directories matching the regex patterns to the ignore-list. The
@@ -623,6 +625,9 @@ ignore_patterns = ["src/scripts/db.py"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+dev = ["model-bakery>=1.23.3", "setuptools>=82.0.0"]
+
 
 [tool.ruff]
 # Basic configuration options
@@ -657,13 +662,6 @@ extend-exclude = [
 #max-complexity = 10
 output-format = 'concise'
 
-[tool.ruff.lint.per-file-ignores]
-"*.py" = ["F401", "E402"]
-"tests/**" = [
-  "S101",    # assert usage
-  "PLR2004", # magic values in tests
-]
-
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -679,47 +677,53 @@ select = ["ALL"]
 preview = true
 
 ignore = [
-  "D",       # docstring rules (enable later if you want; they’re noisy to adopt)
   "ANN",     # type annotation enforcement (use Pyright/Mypy instead)
   "COM812",  # can conflict with formatter in some setups
+  "D",       # docstring rules (enable later if you want; they're noisy to adopt)
   "ISC001",  # can conflict with formatter in some setups
   "Q000",    # quote normalization handled by ruff format
+  "PLE1205", # Too many arguments for logging format string
   "PLR0904", # too-many-public-methods
+  "PLR0911", # too-many-return-statements
   "PLR0912", # too-many-branches
   "PLR0913", # too-many-arguments
   "PLR0914", # too-many-locals
   "PLR0915", # too-many-statements
   "PLR1702", # too many nested blocks
-  "PLE1205", # Too many arguments for logging format string
-  "PLR0911", # too-many-return-statements
-  "DOC502",  # This discourages reporting raises from ancestors
-  "CPY001",  # Missing copyright notice at top of file
-  "C901",    # function is too complex
   "ARG002",  # unused method argument: `kwargs`
-  "PT009",   # Use a regular assert instead of unittest-style assertEqual
+  "C901",    # function is too complex
+  "CPY001",  # Missing copyright notice at top of file
+  "DOC502",  # This discourages reporting raises from ancestors
   "EM101",   # Exception must not use a string literal, assign to variable first
+  "EM102",   # Exception must not use an f-string literal, assign to variable first
+  "PT009",   # Use a regular assert instead of unittest-style assertEqual
   "TRY003",  # Avoid specifying long messages outside the exception class
   "TRY400",  # Use logging.exception insead of error
-  "EM102",   # Exception must not use an f-string literal, assign to variable first
-  "UP040",   # Using type alias instead of type keyword
+  "DJ001",   # Avoid null=True on CharField
   "E501",    # Line too long
   "FIX002",  # TODOs
+  "PD011",   # Use to_numpy instead of values
   "TD002",   # Missing author in TODO
   "TD003",   # Missing issue link for this TODO
   "TD004",   # Missing colon in TODO
   "TD005",   # Missing issue description
-  "DJ001",   # Avoid null=True on CharField
-  "PD011",   # Use to_numpy instead of values
+  "UP040",   # Using type alias instead of type keyword
   # Temporary ignores
-  "T201",    # Print found
+  "ARG001",  # Unused fn argument
+  "B019",    # possible memleak
   "BLE001",  # dont catch blind exception 'Exception'
-  "PLR2004", # magic values in tests
-  "TRY300",  # Consider moving to else
-  "SLF001",  # Private member accessed
-  "PLR6301", # Method could be a function, class method, or static
-  "UP022",   # Prefer capture_output over stdout and stderr -> PIPE
+  "DOC201",  # Docstring specifics
   "ERA001",  # Found commented out code
-  "TRY301",  # Abstract raise to an inner function
+  "FBT003",  # Boolean positional value in fn call
+  "FURB101", # open and read should be replaced by pathlib
+  "FURB103", # open should be replaced with pathlib
+  "N806",    # Variable in function should be lowercase
+  "PGH003",  # Use specific rule codes when ignoring type issues
+  "PLC0415", # Import should be at top
+  "PLR2004", # magic values in tests
+  "PLR6301", # Method could be a function, class method, or static
+  "PT006",   # Wrong type passed
+  "PT027",   # Use pytest.raises
   "PTH100",  # Use pathlib instead
   "PTH101",  # Use pathlib
   "PTH102",  # Use pathlib
@@ -751,74 +755,79 @@ ignore = [
   "PTH205",  # Use pathlib instead
   "PTH206",  # Use pathlib instead
   "PTH207",  # Use pathlib instead
-  "FURB101", # open and read should be replaced by pathlib
-  "FURB103", # open should be replaced with pathlib
-  "SIM108",  # Use ternary operator insead of if-else
-  "FBT003",  # Boolean positional value in fn call
-  "N806",    # Variable in function should be lowercase
-  "S603",    # subprocess Call: check for execution of untrusted input
-  "S404",    # subprocess module is potentially insecure
-  "S607",    # potential executable path
-  "S324",    # Probably use of insecure hash
-  "S101",    # assert usage
-  "S402",    # ftplib is insecure
-  "S321",    # FTP functions are insecure
-  "SIM102",  # Use single if
-  "PT027",   # Use pytest.raises
-  "ARG001",  # Unused fn argument
-  "PT006",   # Wrong type passed
-  "SLOT000", # Use slots
-  "B019",    # possible memleak
-  "PLC0415", # Import should be at top
-  "PGH003",  # Use specific rule codes when ignoring type issues
   "RUF012",  # Mutable class attributes should be annotated
-  "DOC201",  # Docstring specifics
-  "DOC501",  #
-  "N802",    # function name should be lowercase
-  "G004",    #
-  "PLW1514", #
-  "S701",    #
-  "TRY002",  #
+  "S101",    # assert usage
+  "S321",    # FTP functions are insecure
+  "S324",    # Probably use of insecure hash
+  "S402",    # ftplib is insecure
+  "S404",    # subprocess module is potentially insecure
+  "S603",    # subprocess Call: check for execution of untrusted input
+  "S607",    # potential executable path
+  "SIM102",  # Use single if
+  "SIM108",  # Use ternary operator insead of if-else
+  "SLF001",  # Private member accessed
+  "SLOT000", # Use slots
+  "T201",    # Print found
+  "TRY300",  # Consider moving to else
+  "TRY301",  # Abstract raise to an inner function
+  "UP022",   # Prefer capture_output over stdout and stderr -> PIPE
+  # TODO - just quickly get this running clean. Everything below should be reviewed.
+  "A005",    #
+  "ARG003",  #
+  "B007",    #
   "B034",    #
-  "PLR6201", #
-  "RUF005",  #
+  "B904",    #
+  "DOC202",  #
+  "DOC501",  #
   "FBT001",  #
   "FBT002",  #
-  "PLC1901", #
-  "A005",    #
-  "TCH001",  #
-  "N818",    #
-  "RSE102",  #
-  "SIM101",  #
-  "UP035",   #
+  "FURB118", #
+  "FURB148", #
+  "G004",    #
   "ISC003",  #
-  "RET504",  #
+  "N801",    #
+  "N802",    # function name should be lowercase
+  "N818",    #
+  "N999",    #
+  "PERF401", #
+  "PLC1901", #
+  "PLR0917", #
   "PLR6104", #
-  "TRY201",  #
-  "SIM110",  #
+  "PLR6201", #
+  "PLW1514", #
+  "PYI041",  #
+  "RET504",  #
+  "RSE102",  #
+  "RUF002",  #
+  "RUF005",  #
+  "S602",    #
+  "S608",    #
+  "S701",    #
+  "SIM101",  #
   "SIM103",  #
-  "DOC202",  #
+  "SIM105",  #
+  "SIM110",  #
   "SIM112",  #
-  "B904",
-  "S602",
-  "UP036",
-  "TCH003",
-  "FURB148",
-  "PERF401",
-  "B007",
-  "ARG003",
-  "N999",
-  "PLR0917",
-  "TCH002",
-  "S608",
-  "FURB118",
-  "SIM105",
-  "N801",
-  "PYI041",
-  "TCH004",
-  "RUF002",
+  "TCH001",  #
+  "TCH002",  #
+  "TCH003",  #
+  "TCH004",  #
+  "TRY002",  #
+  "TRY201",  #
+  "UP035",   #
+  "UP036",   #
 
 ] # A sane ignore set for many modern codebases.
+
+[tool.ruff.lint.per-file-ignores]
+"*.py" = ["F401", "E402"]
+"tests/**" = [
+  "S101",    # assert usage
+  "PLR2004", # magic values in tests
+]
+"__init__.py" = [
+  "F401", # allow unused imports in __init__.py files
+]
 
 [tool.ruff.lint.isort]
 known-first-party = ["imageinn"]
