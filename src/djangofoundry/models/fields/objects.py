@@ -33,6 +33,7 @@ from psqlextra import fields
 # Optional imports
 try:
     import picklefield.fields
+
     PICKLEFIELD_AVAILABLE = True
 except ImportError:
     PICKLEFIELD_AVAILABLE = False
@@ -78,15 +79,14 @@ class JsonFloatValues(Func):
 class PickledObjectField(models.Field):
     """
     A PickledObjectField that uses the picklefield library.
-    
+
     Requires picklefield to be installed.
     """
-    
+
     def __new__(cls, *args, **kwargs):
         if not PICKLEFIELD_AVAILABLE:
             raise ImportError(
-                "picklefield is required to use PickledObjectField. "
-                "Install it with: pip install django-picklefield"
+                "picklefield is required to use PickledObjectField. " "Install it with: pip install django-picklefield"
             )
         # If picklefield is available, return an instance of the actual PickledObjectField
         return picklefield.fields.PickledObjectField(*args, **kwargs)
