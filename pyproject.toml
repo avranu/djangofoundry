@@ -1,7 +1,7 @@
 [project]
 version = "0.1.0"
 name = "django-foundry"
-authors = [{ name = "Jess Mann", email = "jess.a.mann+df@gmail.com" }]
+authors = [{ name = "Jess Mann", email = "jess@jmann.me" }]
 description = "A collection of classes built on Django to make it easier to build web applications."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,7 +18,7 @@ classifiers = [
 [tool.pydoctor]
 add-package = ["./src"]
 project-name = "Django Foundry"
-project-version = "0.0.1"
+project-version = "0.1.0"
 project-url = "https://github.com/avranu/django-foundry"
 html-output = "../docs/API"
 project-base-dir = "./src"
