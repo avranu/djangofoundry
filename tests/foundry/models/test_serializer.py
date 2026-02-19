@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, MagicMock
 from .baker_recipes import TestSerializer
 from tests.testcase import TestCase
 

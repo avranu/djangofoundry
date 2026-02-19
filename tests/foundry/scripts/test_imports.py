@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from djangofoundry.scripts.imports import ImportProcessor
 
 from tests.testcase import TestCase

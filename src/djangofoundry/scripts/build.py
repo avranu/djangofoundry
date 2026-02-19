@@ -1,9 +1,11 @@
-import subprocess
-import toml
-import logging
 import argparse
+import logging
+import subprocess
+
+import toml
 
 logging.basicConfig(level=logging.INFO)
+
 
 class PackageUploader:
     def __init__(self, toml_file):
@@ -12,7 +14,7 @@ class PackageUploader:
 
     def load_config(self):
         try:
-            with open(self.toml_file, "r") as file:
+            with open(self.toml_file) as file:
                 return toml.load(file)
         except FileNotFoundError as e:
             logging.error(f"Error loading TOML file: {e}")
@@ -22,7 +24,7 @@ class PackageUploader:
         try:
             with open(self.toml_file, "w") as file:
                 toml.dump(self.config, file)
-        except IOError as e:
+        except OSError as e:
             logging.error(f"Error saving TOML file: {e}")
             raise
 
@@ -54,16 +56,17 @@ class PackageUploader:
             logging.error(f"Error during upload: {e}")
             raise
 
-
     def update_and_upload(self):
         self.update_minor_version()
         self.save_config()
         self.build_package()
         self.upload_package()
 
+
 def main(args):
     uploader = PackageUploader(args.toml_file)
     uploader.update_and_upload()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Update and upload a Python package")

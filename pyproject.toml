@@ -1,27 +1,25 @@
 [project]
-name = "djangofoundry"
-version = "0.0.9"
-authors = [
-  { name="Jess Mann", email="jess.a.mann+df@gmail.com" },
-]
+version = "0.1.0"
+name = "django-foundry"
+authors = [{ name = "Jess Mann", email = "jess.a.mann+df@gmail.com" }]
 description = "A collection of classes built on Django to make it easier to build web applications."
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: BSD License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/avranu/Django-Foundry"
-"Bug Tracker" = "https://github.com/avranu/Django-Foundry/issues"
+"Homepage" = "https://github.com/avranu/django-foundry"
+"Bug Tracker" = "https://github.com/avranu/django-foundry/issues"
 
 [tool.pydoctor]
 add-package = ["./src"]
 project-name = "Django Foundry"
 project-version = "0.0.1"
-project-url = "https://github.com/avranu/Django-Foundry"
+project-url = "https://github.com/avranu/django-foundry"
 html-output = "../docs/API"
 project-base-dir = "./src"
 intersphinx = ["https://docs.python.org/3/objects.inv"]
@@ -67,16 +65,24 @@ fail-under = 10
 # from-stdin =
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore = ["manage.py", "webpack", "logs", "downloads", "node_modules", "settings", "migrations"]
+ignore = [
+  "manage.py",
+  "webpack",
+  "logs",
+  "downloads",
+  "node_modules",
+  "settings",
+  "migrations",
+]
 
 # Add files or directories matching the regex patterns to the ignore-list. The
 # regex matches against paths and can be in Posix or Windows format.
 # ignore-paths =
 
-# Files or directories matching the regex patterns are skipped. The regex matches
-# against base names, not paths. The default value ignores Emacs file locks
 ignore-patterns = ["^\\.#", ".+[\\/]migrations(/|\\|$)"]
 
+# Files or directories matching the regex patterns are skipped. The regex matches
+# against base names, not paths. The default value ignores Emacs file locks
 # List of module names for which member attributes should not be checked (useful
 # for modules/projects where namespaces are manipulated during runtime and thus
 # existing member attributes cannot be deduced by static analysis). It supports
@@ -369,7 +375,13 @@ logging-modules = ["logging"]
 [tool.pylint."messages control"]
 # Only show warnings with the listed confidence levels. Leave empty to show all.
 # Valid levels: HIGH, CONTROL_FLOW, INFERENCE, INFERENCE_FAILURE, UNDEFINED.
-confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFINED"]
+confidence = [
+  "HIGH",
+  "CONTROL_FLOW",
+  "INFERENCE",
+  "INFERENCE_FAILURE",
+  "UNDEFINED",
+]
 
 # Disable the message, report, category or checker with the given id(s). You can
 # either give multiple identifiers separated by comma (,) or put this option
@@ -380,7 +392,33 @@ confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFIN
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable = ["raw-checker-failed", "bad-inline-option", "locally-disabled", "file-ignored", "suppressed-message", "useless-suppression", "deprecated-pragma", "use-symbolic-message-instead", "missing-function-docstring", "redundant-returns-doc", "pointless-string-statement", "multiple-imports", "missing-final-newline", "empty-comment", "too-few-public-methods", "too-many-lines", "broad-exception-caught", "invalid-name", "logging-fstring-interpolation", "too-many-ancestors", "too-many-public-methods", "too-many-arguments", "trailing-newlines", "too-many-instance-attributes", "unnecessary-pass"]
+disable = [
+  "raw-checker-failed",
+  "bad-inline-option",
+  "locally-disabled",
+  "file-ignored",
+  "suppressed-message",
+  "useless-suppression",
+  "deprecated-pragma",
+  "use-symbolic-message-instead",
+  "missing-function-docstring",
+  "redundant-returns-doc",
+  "pointless-string-statement",
+  "multiple-imports",
+  "missing-final-newline",
+  "empty-comment",
+  "too-few-public-methods",
+  "too-many-lines",
+  "broad-exception-caught",
+  "invalid-name",
+  "logging-fstring-interpolation",
+  "too-many-ancestors",
+  "too-many-public-methods",
+  "too-many-arguments",
+  "trailing-newlines",
+  "too-many-instance-attributes",
+  "unnecessary-pass",
+]
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -500,12 +538,22 @@ ignore-none = true
 ignore-on-opaque-inference = true
 
 # List of symbolic message names to ignore for Mixin members.
-ignored-checks-for-mixins = ["no-member", "not-async-context-manager", "not-context-manager", "attribute-defined-outside-init"]
+ignored-checks-for-mixins = [
+  "no-member",
+  "not-async-context-manager",
+  "not-context-manager",
+  "attribute-defined-outside-init",
+]
 
 # List of class names for which member attributes should not be checked (useful
 # for classes with dynamically set attributes). This supports the use of
 # qualified names.
-ignored-classes = ["optparse.Values", "thread._local", "_thread._local", "argparse.Namespace"]
+ignored-classes = [
+  "optparse.Values",
+  "thread._local",
+  "_thread._local",
+  "argparse.Namespace",
+]
 
 # Show a hint with possible names when a member name was not found. The aspect of
 # finding the hint is based on edit distance.
@@ -553,7 +601,13 @@ init-import = false
 
 # List of qualified module names which can have objects that can redefine
 # builtins.
-redefining-builtins-modules = ["six.moves", "past.builtins", "future.builtins", "builtins", "io"]
+redefining-builtins-modules = [
+  "six.moves",
+  "past.builtins",
+  "future.builtins",
+  "builtins",
+  "io",
+]
 
 [tool.yapf]
 based_on_style = "google"
@@ -563,10 +617,232 @@ column_limit = 250
 
 # must ignore this until yapf supports match/case from python 3.11
 [tool.yapfignore]
-ignore_patterns = [
-  "src/scripts/db.py", 
-]
+ignore_patterns = ["src/scripts/db.py"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+
+[tool.ruff]
+# Basic configuration options
+target-version = "py312"
+line-length = 250
+respect-gitignore = true
+include = ["**/*.py", "**/*.pyi"]
+exclude = [
+  "node_modules/",
+  ".venv/",
+  ".venv_windows/",
+  ".direnv/",
+  ".env",
+  "manage.py",
+  ".vscode",
+  "pgsql",
+  "migrations/",
+  "logs/",
+  "__pycache__",
+]
+
+# Advanced configuration options
+extend-exclude = [
+  "migrations",
+  "settings",
+  "logs",
+  "node_modules",
+  "__pycache__",
+  "tests",
+  "__init__.py",
+]
+#max-complexity = 10
+output-format = 'concise'
+
+[tool.ruff.lint.per-file-ignores]
+"*.py" = ["F401", "E402"]
+"tests/**" = [
+  "S101",    # assert usage
+  "PLR2004", # magic values in tests
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+# "select = ['ALL']" turns on essentially everything Ruff knows about.
+# Expect to ignore a handful that conflict with your style or are too noisy.
+select = ["ALL"]
+
+# Turn on preview rules (newer checks; can be a bit more volatile)
+preview = true
+
+ignore = [
+  "D",       # docstring rules (enable later if you want; they’re noisy to adopt)
+  "ANN",     # type annotation enforcement (use Pyright/Mypy instead)
+  "COM812",  # can conflict with formatter in some setups
+  "ISC001",  # can conflict with formatter in some setups
+  "Q000",    # quote normalization handled by ruff format
+  "PLR0904", # too-many-public-methods
+  "PLR0912", # too-many-branches
+  "PLR0913", # too-many-arguments
+  "PLR0914", # too-many-locals
+  "PLR0915", # too-many-statements
+  "PLR1702", # too many nested blocks
+  "PLE1205", # Too many arguments for logging format string
+  "PLR0911", # too-many-return-statements
+  "DOC502",  # This discourages reporting raises from ancestors
+  "CPY001",  # Missing copyright notice at top of file
+  "C901",    # function is too complex
+  "ARG002",  # unused method argument: `kwargs`
+  "PT009",   # Use a regular assert instead of unittest-style assertEqual
+  "EM101",   # Exception must not use a string literal, assign to variable first
+  "TRY003",  # Avoid specifying long messages outside the exception class
+  "TRY400",  # Use logging.exception insead of error
+  "EM102",   # Exception must not use an f-string literal, assign to variable first
+  "UP040",   # Using type alias instead of type keyword
+  "E501",    # Line too long
+  "FIX002",  # TODOs
+  "TD002",   # Missing author in TODO
+  "TD003",   # Missing issue link for this TODO
+  "TD004",   # Missing colon in TODO
+  "TD005",   # Missing issue description
+  "DJ001",   # Avoid null=True on CharField
+  "PD011",   # Use to_numpy instead of values
+  # Temporary ignores
+  "T201",    # Print found
+  "BLE001",  # dont catch blind exception 'Exception'
+  "PLR2004", # magic values in tests
+  "TRY300",  # Consider moving to else
+  "SLF001",  # Private member accessed
+  "PLR6301", # Method could be a function, class method, or static
+  "UP022",   # Prefer capture_output over stdout and stderr -> PIPE
+  "ERA001",  # Found commented out code
+  "TRY301",  # Abstract raise to an inner function
+  "PTH100",  # Use pathlib instead
+  "PTH101",  # Use pathlib
+  "PTH102",  # Use pathlib
+  "PTH103",  # Use pathlib
+  "PTH104",  # Use pathlib instead
+  "PTH105",  # Use pathlib instead
+  "PTH106",  # Use pathlib instead
+  "PTH107",  # Use pathlib instead
+  "PTH108",  # Use pathlib instead
+  "PTH109",  # Use pathlib instead
+  "PTH110",  # Use pathlib instead
+  "PTH111",  # Use pathlib instead
+  "PTH112",  # Use pathlib instead
+  "PTH113",  # Use pathlib instead
+  "PTH114",  # Use pathlib instead
+  "PTH115",  # Use pathlib instead
+  "PTH116",  # Use pathlib instead
+  "PTH117",  # Use pathlib instead
+  "PTH118",  # Use pathlib
+  "PTH119",  # Use pathlib
+  "PTH120",  # Use pathlib instead
+  "PTH121",  # Use pathlib instead
+  "PTH122",  # Use pathlib instead
+  "PTH123",  # open should be replaced with pathlib
+  "PTH201",  # Use pathlib instead
+  "PTH202",  # Use pathlib instead
+  "PTH203",  # Use pathlib instead
+  "PTH204",  # Use pathlib instead
+  "PTH205",  # Use pathlib instead
+  "PTH206",  # Use pathlib instead
+  "PTH207",  # Use pathlib instead
+  "FURB101", # open and read should be replaced by pathlib
+  "FURB103", # open should be replaced with pathlib
+  "SIM108",  # Use ternary operator insead of if-else
+  "FBT003",  # Boolean positional value in fn call
+  "N806",    # Variable in function should be lowercase
+  "S603",    # subprocess Call: check for execution of untrusted input
+  "S404",    # subprocess module is potentially insecure
+  "S607",    # potential executable path
+  "S324",    # Probably use of insecure hash
+  "S101",    # assert usage
+  "S402",    # ftplib is insecure
+  "S321",    # FTP functions are insecure
+  "SIM102",  # Use single if
+  "PT027",   # Use pytest.raises
+  "ARG001",  # Unused fn argument
+  "PT006",   # Wrong type passed
+  "SLOT000", # Use slots
+  "B019",    # possible memleak
+  "PLC0415", # Import should be at top
+  "PGH003",  # Use specific rule codes when ignoring type issues
+  "RUF012",  # Mutable class attributes should be annotated
+  "DOC201",  # Docstring specifics
+  "DOC501",  #
+  "N802",    # function name should be lowercase
+  "G004",    #
+  "PLW1514", #
+  "S701",    #
+  "TRY002",  #
+  "B034",    #
+  "PLR6201", #
+  "RUF005",  #
+  "FBT001",  #
+  "FBT002",  #
+  "PLC1901", #
+  "A005",    #
+  "TCH001",  #
+  "N818",    #
+  "RSE102",  #
+  "SIM101",  #
+  "UP035",   #
+  "ISC003",  #
+  "RET504",  #
+  "PLR6104", #
+  "TRY201",  #
+  "SIM110",  #
+  "SIM103",  #
+  "DOC202",  #
+  "SIM112",  #
+  "B904",
+  "S602",
+  "UP036",
+  "TCH003",
+  "FURB148",
+  "PERF401",
+  "B007",
+  "ARG003",
+  "N999",
+  "PLR0917",
+  "TCH002",
+  "S608",
+  "FURB118",
+  "SIM105",
+  "N801",
+  "PYI041",
+  "TCH004",
+  "RUF002",
+
+] # A sane ignore set for many modern codebases.
+
+[tool.ruff.lint.isort]
+known-first-party = ["imageinn"]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 6
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = ["src"]
+namespace_packages = true
+explicit_package_bases = false
+warn_unused_ignores = true
+show_error_context = true
+show_column_numbers = true
+show_error_code_links = true
+pretty = true
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+exclude = []
+implicit_optional = true
+disable_error_code = ['misc', 'annotation-unchecked', 'override']

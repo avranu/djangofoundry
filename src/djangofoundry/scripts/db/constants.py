@@ -1,4 +1,5 @@
 import os
+
 from djangofoundry.scripts.db.functions import get_app_dir
 
 # Default path to the data directory, which we pass directly to postgres

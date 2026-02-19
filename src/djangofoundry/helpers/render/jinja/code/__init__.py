@@ -1,21 +1,21 @@
 """
 
-	Metadata:
+    Metadata:
 
-		File: __init__.py
-		Project: Django Foundry
-		Created Date: 09 Apr 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
+        File: __init__.py
+        Project: Django Foundry
+        Created Date: 09 Apr 2023
+        Author: Jess Mann
+        Email: jess.a.mann@gmail.com
 
-		-----
+        -----
 
-		Last Modified: Thu Apr 13 2023
-		Modified By: Jess Mann
+        Last Modified: Thu Apr 13 2023
+        Modified By: Jess Mann
 
-		-----
+        -----
 
-		Copyright (c) 2023 Jess Mann
+        Copyright (c) 2023 Jess Mann
 """
 from djangofoundry.helpers.render.jinja.code.template import CodeHelper
 from djangofoundry.helpers.render.jinja.code.python import PythonHelper, ModelHelper

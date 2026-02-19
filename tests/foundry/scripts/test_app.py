@@ -1,10 +1,8 @@
 import pytest
-from unittest.mock import patch, MagicMock, call
-from djangofoundry.scripts.app import App, Actions
-import platform
+from unittest.mock import patch, MagicMock
+from djangofoundry.scripts.app import App
 import psutil
 import subprocess
-import sys
 
 from tests.testcase import TestCase
 

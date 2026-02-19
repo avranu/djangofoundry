@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from django.http import HttpRequest
 from djangofoundry.controllers.memory import MemoryMonitorView, memory_usage
 

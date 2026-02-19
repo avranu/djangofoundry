@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from rest_framework.test import APIRequestFactory, force_authenticate
 from .baker_recipes import TestViewSet
 from tests.testcase import TestCase

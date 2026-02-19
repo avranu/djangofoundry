@@ -1,15 +1,11 @@
 {
 	"name": "Existing Docker Compose (Extend)",
-
 	"dockerComposeFile": [
 		"../docker-compose.yml",
 		"docker-compose.yml"
 	],
-
 	"service": "djangofoundry",
-
 	"workspaceFolder": "/app",
-
 	"customizations": {
 		"vscode": {
 			"settings": {},
@@ -17,16 +13,16 @@
 				"ms-python.python",
 				"eamodio.gitlens",
 				"editorconfig.editorconfig",
-                "github-copilot.nightly",
-                "batisteo.vscode-django",
-                "github.copilot-chat",
-                "atlassian.atlascode",
-                "yzhang.markdown-all-in-one",
-                "psioniq.psi-header",
-                "ms-python.vscode-pylance",
-                "redhat.vscode-yaml",
-                "ms-azuretools.vscode-docker",
-                "ms-vscode-remote.remote-containers"
+				"github-copilot.nightly",
+				"batisteo.vscode-django",
+				"github.copilot-chat",
+				"atlassian.atlascode",
+				"yzhang.markdown-all-in-one",
+				"psioniq.psi-header",
+				"ms-python.vscode-pylance",
+				"redhat.vscode-yaml",
+				"ms-azuretools.vscode-docker",
+				"ms-vscode-remote.remote-containers"
 			]
 		}
 	}

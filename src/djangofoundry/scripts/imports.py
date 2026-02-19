@@ -1,28 +1,30 @@
 """
-	
-	Metadata:
-	
-		File: imports.py
-		Project: django-foundry
-		Created Date: 14 Jun 2023
-		Author: Jess Mann
-		Email: jess.a.mann@gmail.com
-	
-		-----
-	
-		Last Modified: Wed Jun 14 2023
-		Modified By: Jess Mann
-	
-		-----
-	
-		Copyright (c) 2023 Jess Mann
+
+Metadata:
+
+        File: imports.py
+        Project: django-foundry
+        Created Date: 14 Jun 2023
+        Author: Jess Mann
+        Email: jess.a.mann@gmail.com
+
+        -----
+
+        Last Modified: Wed Jun 14 2023
+        Modified By: Jess Mann
+
+        -----
+
+        Copyright (c) 2023 Jess Mann
 """
+
+import argparse
+from collections import defaultdict
+import logging
 import os
 import re
-import argparse
-import logging
 import sys
-from collections import defaultdict
+
 
 class ImportProcessor:
     def __init__(self, path):
@@ -33,12 +35,12 @@ class ImportProcessor:
 
         for root, _, files in os.walk(self.path):
             for file in files:
-                if not file.endswith('.py'):
+                if not file.endswith(".py"):
                     continue
 
                 file_path = os.path.join(root, file)
                 try:
-                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    with open(file_path, encoding="utf-8", errors="ignore") as f:
                         lines = f.readlines()
                         for i, line in enumerate(lines):
                             if re.search(pattern1, line):
@@ -51,12 +53,12 @@ class ImportProcessor:
         return matching_files
 
     def find_imports(self, file_path):
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(file_path, encoding="utf-8", errors="ignore") as f:
             content = f.read()
-            imports = re.findall(r'^\s*(?:from|import) (\S+)', content, re.MULTILINE)
+            imports = re.findall(r"^\s*(?:from|import) (\S+)", content, re.MULTILINE)
             return imports
 
-    def find_circular_imports(self, ext='.py'):
+    def find_circular_imports(self, ext=".py"):
         imports = defaultdict(set)
         for root, _, files in os.walk(self.path):
             for file in files:
@@ -64,7 +66,7 @@ class ImportProcessor:
                     continue
 
                 file_path = os.path.join(root, file)
-                module_path = os.path.relpath(file_path, self.path).replace('\\', '/').rstrip(ext)
+                module_path = os.path.relpath(file_path, self.path).replace("\\", "/").rstrip(ext)
 
                 for imported_module in self.find_imports(file_path):
                     imports[module_path].add(imported_module)
@@ -81,7 +83,7 @@ class ImportProcessor:
 
             for imported_module in imports[module]:
                 if imported_module in path:
-                    circular_imports.add(tuple(path[path.index(imported_module):] + [imported_module]))
+                    circular_imports.add(tuple(path[path.index(imported_module) :] + [imported_module]))
                 else:
                     visit(imported_module, path)
 
@@ -92,13 +94,26 @@ class ImportProcessor:
 
         return circular_imports
 
+
 def main():
     parser = argparse.ArgumentParser(description="Process Python imports")
     parser.add_argument("path", help="Directory path to search")
     parser.add_argument("--pattern1", help="First pattern to search")
     parser.add_argument("--pattern2", help="Second pattern to search")
-    parser.add_argument("--loglevel", type=str, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default="INFO", help="Set logging verbosity")
-    parser.add_argument("-a", "--action", choices=["circular", "order"], default="circular", help="The action to perform. CIRCULAR, ORDER")
+    parser.add_argument(
+        "--loglevel",
+        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="INFO",
+        help="Set logging verbosity",
+    )
+    parser.add_argument(
+        "-a",
+        "--action",
+        choices=["circular", "order"],
+        default="circular",
+        help="The action to perform. CIRCULAR, ORDER",
+    )
 
     args = parser.parse_args()
 
@@ -128,6 +143,7 @@ def main():
 
         for file in matching_files:
             print(file)
+
 
 if __name__ == "__main__":
     main()

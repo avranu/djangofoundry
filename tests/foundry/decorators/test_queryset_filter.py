@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 from tests.testcase import TestCase
 
 class TestQuerysetFilter(TestCase):
@@ -21,7 +21,7 @@ class TestQuerysetFilter(TestCase):
     def test_set_name(self):
         def filter_fn():
             return "filter result"
-        
+
         queryset_filter = Queryset_Filter(filter_fn, "test_filter")
         queryset_filter.__set_name__(MagicMock(filters={}), "test_filter")
         assert "test_filter" in queryset_filter.queryset.filters

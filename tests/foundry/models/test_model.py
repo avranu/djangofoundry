@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, MagicMock
 from django.db import models
 
 # A concrete model for testing the abstract Model

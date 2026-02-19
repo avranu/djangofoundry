@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import patch, MagicMock
 from decimal import Decimal
 from djangofoundry.helpers.progress import ProgressBar, ChildProgressBar
 

@@ -23,6 +23,8 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
+from django.db.models import QuerySet
+
 # Django Imports
 from django.views import generic
 
@@ -30,7 +32,9 @@ from django.views import generic
 # App Imports
 
 
-class ListController(generic.ListView):
+class TemplateController(generic.ListView):
     """
     Generic controller for providing list views for django models. All list views in our application inherit from this.
     """
+
+    queryset = QuerySet().none()  # pyright: ignore[reportUnknownVariableType]

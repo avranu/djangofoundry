@@ -1,6 +1,5 @@
-from typing import Callable
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from tests.testcase import TestCase
 
