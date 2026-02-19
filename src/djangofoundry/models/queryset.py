@@ -21,15 +21,12 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Callable
-from datetime import datetime
-from decimal import Decimal
 from functools import reduce
 import logging
 from math import sqrt
 import operator
 from time import perf_counter_ns
-from typing import TYPE_CHECKING, Any, List, Optional, Self, Tuple, Union
+from typing import TYPE_CHECKING, Any, Self
 
 # Django extensions
 import auto_prefetch
@@ -61,6 +58,11 @@ import pandas as pd
 from scipy import stats
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import grangercausalitytests
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from datetime import datetime
+    from decimal import Decimal
 
 # App Imports
 

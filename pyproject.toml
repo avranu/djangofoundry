@@ -803,19 +803,7 @@ ignore = [
   "S602",    #
   "S608",    #
   "S701",    #
-  "SIM101",  #
-  "SIM103",  #
-  "SIM105",  #
-  "SIM110",  #
-  "SIM112",  #
-  "TCH001",  #
-  "TCH002",  #
-  "TCH003",  #
-  "TCH004",  #
   "TRY002",  #
-  "TRY201",  #
-  "UP035",   #
-  "UP036",   #
 
 ] # A sane ignore set for many modern codebases.
 

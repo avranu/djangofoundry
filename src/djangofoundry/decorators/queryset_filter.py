@@ -23,10 +23,12 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from djangofoundry.models import QuerySet
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from djangofoundry.models import QuerySet
 
 
 class Queryset_Filter:

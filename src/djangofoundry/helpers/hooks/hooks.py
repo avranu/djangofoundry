@@ -25,12 +25,14 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from djangofoundry.helpers.hooks.hook import Hook
 from djangofoundry.helpers.hooks.meta import DEFAULT_NAMESPACE, DEFAULT_PRIORITY, NamespaceMap
 from djangofoundry.helpers.hooks.waypoint import Waypoint
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
 
 
 class Hooks:
@@ -164,12 +166,7 @@ class Hooks:
         if namespace not in cls._hooks or name not in cls._hooks[namespace]:
             return False
 
-        # This name/namespace was defined, but no waypoint is there.
-        if cls._hooks[namespace][name] is None:
-            return False
-
-        # Passed all checks, so must have found a waypoint here!
-        return True
+        return cls._hooks[namespace][name] is not None
 
     @classmethod
     def get_waypoint(cls, name: str, namespace: str = DEFAULT_NAMESPACE) -> Waypoint | None:

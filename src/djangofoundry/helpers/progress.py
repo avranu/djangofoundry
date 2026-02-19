@@ -26,14 +26,16 @@ from __future__ import annotations
 from datetime import timedelta
 from decimal import Decimal
 from time import perf_counter_ns
-from typing import Optional, Self
+from typing import TYPE_CHECKING, Optional, Self
 
-from celery.app.task import Task
 from celery_progress.backend import PROGRESS_STATE, ProgressRecorder
 
 # Django Imports
 from django.db.models import TextChoices
 import humanize
+
+if TYPE_CHECKING:
+    from celery.app.task import Task
 
 # Lib Imports
 # App Imports

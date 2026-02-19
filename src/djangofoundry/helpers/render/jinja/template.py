@@ -21,11 +21,14 @@ Metadata:
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from jinja2 import Environment, PackageLoader, TemplateNotFound, select_autoescape
-from pyparsing import Optional
 
 from djangofoundry.helpers.render.template import TemplateHelper as BaseTemplate
+
+if TYPE_CHECKING:
+    from pyparsing import Optional
 
 # Set up logging for this module
 logger = logging.getLogger(__name__)

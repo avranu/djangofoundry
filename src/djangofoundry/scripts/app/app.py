@@ -23,7 +23,6 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Callable
 import getpass
 import json
 import logging
@@ -33,7 +32,7 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from jinja2 import Environment, FileSystemLoader
 import psutil
@@ -44,6 +43,9 @@ from djangofoundry.scripts.db.db import Db
 # Our imports
 from djangofoundry.scripts.utils.exceptions import DbStartError, UnsupportedCommandError
 from djangofoundry.scripts.utils.settings import DEFAULT_SETTINGS_PATH, Settings
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 logger = logging.getLogger(__name__)
@@ -169,10 +171,7 @@ class App:
         """
         # If the package_name contains multiple packages, split them and install them individually
         if " " in package_name:
-            for single_package_name in package_name.split(" "):
-                if not self.pip_install(single_package_name):
-                    return False
-            return True
+            return all(self.pip_install(single_package_name) for single_package_name in package_name.split(" "))
 
         # If requirements.txt doesn't exist, create it
         if not os.path.exists("requirements.txt"):
@@ -547,8 +546,6 @@ class App:
                 OSError: If the operating system is not supported.
         """
         # Check Python version
-        if sys.version_info < (3, 10):
-            raise OSError("Python 3.10 or above is required.")
         logger.debug("Python version check passed.")
 
         # Check directory permissions
@@ -738,11 +735,7 @@ class App:
         Determine the status of our application.
         """
         server_process_names = ["runserver", "gunicorn", "daphne"]
-        for process in psutil.process_iter(["name"]):
-            if process.name() in server_process_names:
-                return True
-
-        return False
+        return any(process.name() in server_process_names for process in psutil.process_iter(["name"]))
 
     def sync_browser(self):
         """

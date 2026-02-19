@@ -24,14 +24,16 @@ from __future__ import annotations
 import logging
 import logging.config
 import os
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
 from yaml.loader import SafeLoader
 
 # App imports
 from djangofoundry.scripts.utils.exceptions import FileEmptyError
-from djangofoundry.scripts.utils.types import SettingsFile, SettingsLog
+
+if TYPE_CHECKING:
+    from djangofoundry.scripts.utils.types import SettingsFile, SettingsLog
 
 DEFAULT_SETTINGS_PATH: str = "../conf/sample-settings.yaml"
 

@@ -51,7 +51,7 @@ class EnumAction(argparse.Action):
             logger.critical(
                 f'Exception setting enum choices for argparse. This can happen if the enum is set with a non-string value. "{e}"'
             )
-            raise e
+            raise
 
         super().__init__(**kwargs)
 

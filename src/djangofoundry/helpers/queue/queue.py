@@ -21,18 +21,21 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections import deque
-from collections.abc import Callable
 import queue
-from typing import Any, Optional, Self
+from typing import TYPE_CHECKING, Any, Optional, Self
 
 from psqlextra.query import ConflictAction
 
 # Django Imports
 # Lib Imports
 from djangofoundry.helpers.queue import signals
-from djangofoundry.models import Model
 from djangofoundry.models.choices import TextChoices
+
+if TYPE_CHECKING:
+    from collections import deque
+    from collections.abc import Callable
+
+    from djangofoundry.models import Model
 
 # App Imports
 

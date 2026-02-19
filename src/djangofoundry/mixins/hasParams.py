@@ -20,12 +20,14 @@ Metadata:
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 import logging
 import re
 
 # Generic imports
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 # Get a logger for logging messages
 #

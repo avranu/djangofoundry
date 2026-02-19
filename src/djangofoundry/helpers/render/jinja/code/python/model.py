@@ -22,11 +22,10 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import List, Optional
+from typing import TYPE_CHECKING
 
 # DJANGO imports
 from django.db import connections
-from django.db.backends.utils import CursorWrapper
 from jinja2 import TemplateNotFound
 
 from djangofoundry.helpers.render.jinja.code.python.template import PythonHelper
@@ -34,6 +33,9 @@ from djangofoundry.helpers.render.jinja.code.python.template import PythonHelper
 # LIB imports
 from djangofoundry.helpers.render.meta.model import ColumnInfo, ConstraintInfo, IndexColumnInfo, IndexInfo
 from djangofoundry.models import Model
+
+if TYPE_CHECKING:
+    from django.db.backends.utils import CursorWrapper
 
 # Set up logging for this module
 logger = logging.getLogger(__name__)

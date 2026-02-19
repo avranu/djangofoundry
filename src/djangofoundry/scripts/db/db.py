@@ -138,8 +138,8 @@ class Db:
         self.data_path = data_path
         self.log_path = log_path
 
-        self._user = os.environ.get("django_foundry_db_user", "postgres")
-        self._database = os.environ.get("django_foundry_db_database", "DjangoFoundry")
+        self._user = os.environ.get("DJANGO_FOUNDRY_DB_USER", "postgres")
+        self._database = os.environ.get("DJANGO_FOUNDRY_DB_DATABASE", "DjangoFoundry")
 
     def create_data_dir(self) -> None:
         """
@@ -269,10 +269,7 @@ class Db:
         if PostgresStatusCodes.encountered_error(result):
             logger.warning("Encountered error while checking status. Postgres error code %s", result)
 
-        if PostgresStatusCodes.is_running(result):
-            return True
-
-        return False
+        return bool(PostgresStatusCodes.is_running(result))
 
     @db_action(Actions.CHECK_ERRORS)
     def check_errors(self) -> bool:

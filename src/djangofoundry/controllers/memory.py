@@ -18,6 +18,7 @@ Metadata:
         Copyright (c) 2023 Jess Mann
 """
 
+import contextlib
 import tracemalloc
 
 from django.http import JsonResponse
@@ -87,10 +88,8 @@ def memory_usage(request):
         try:
             worker_memory = worker.memory_info().rss / (1024 * 1024)
             task_name = "unknown"
-            try:
+            with contextlib.suppress(IndexError):
                 task_name = worker.cmdline()[2]
-            except IndexError:
-                pass
             celery_worker_info.append({"name": task_name, "memory": round(worker_memory, 2)})
         except psutil.NoSuchProcess:
             celery_worker_info.append({"name": "Terminated Worker", "memory": 0})

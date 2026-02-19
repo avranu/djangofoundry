@@ -2,7 +2,7 @@ import argparse
 import ast
 import logging
 import os
-from typing import Any, Dict, List, Union
+from typing import Any
 
 # Configure logger to print to output
 logging.basicConfig(level=logging.DEBUG, handlers=[logging.StreamHandler()])
@@ -27,10 +27,7 @@ class PythonClassParser:
 
     @classmethod
     def is_ignored(cls, path: str, ignored_paths: list[str]) -> bool:
-        for ignored in ignored_paths:
-            if ignored in path:
-                return True
-        return False
+        return any(ignored in path for ignored in ignored_paths)
 
     def find_python_files(self, directory: str) -> list[str]:
         """
@@ -73,7 +70,7 @@ class PythonClassParser:
         try:
             if isinstance(node.returns, ast.Name):
                 result = node.returns.id
-            elif isinstance(node.returns, ast.Subscript) or isinstance(node.returns, ast.Attribute):
+            elif isinstance(node.returns, ast.Subscript | ast.Attribute):
                 result = ast.unparse(node.returns).strip()
             else:
                 result = "None"

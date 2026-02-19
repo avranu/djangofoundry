@@ -23,9 +23,12 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from decimal import Decimal
 import math
 import time
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from decimal import Decimal
 
 
 # Retry decorator with exponential backoff

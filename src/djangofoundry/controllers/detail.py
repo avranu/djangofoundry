@@ -25,13 +25,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from django.http import HttpRequest, JsonResponse
-
 # Django Imports
 from django.views import generic
 
 # App Imports
 from djangofoundry.mixins import JSONResponseMixin
+
+if TYPE_CHECKING:
+    from django.http import HttpRequest, JsonResponse
 
 
 class DetailController(generic.DetailView):

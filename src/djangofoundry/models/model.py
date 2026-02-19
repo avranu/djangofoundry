@@ -25,9 +25,8 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Iterable
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 # Django extensions
 import auto_prefetch
@@ -38,6 +37,9 @@ from django.db import models
 # Lib Imports
 from djangofoundry.mixins import Hookable
 from djangofoundry.models.manager import PostgresManager
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 # Set up a logger for this module.
 #

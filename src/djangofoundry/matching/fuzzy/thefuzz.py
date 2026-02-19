@@ -20,11 +20,14 @@ Metadata:
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from thefuzz import fuzz, process
 
 from djangofoundry.matching.engine import MatchingEngine
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class TheFuzz(MatchingEngine):

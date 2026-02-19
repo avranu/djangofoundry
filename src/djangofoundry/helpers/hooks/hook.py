@@ -22,10 +22,12 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Any, Tuple
+from typing import TYPE_CHECKING, Any
 
 from djangofoundry.helpers.hooks.meta import DEFAULT_NAMESPACE, DEFAULT_PRIORITY
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class Hook:

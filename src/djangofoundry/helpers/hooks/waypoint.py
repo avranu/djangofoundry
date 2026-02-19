@@ -22,12 +22,13 @@ Metadata:
 # Generic imports
 from __future__ import annotations
 
-from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any
 
 from djangofoundry.helpers.hooks.meta.constants import DEFAULT_NAMESPACE
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from djangofoundry.helpers.hooks.hook import Hook
 
 
